@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
 import TicketForm from '@/components/TicketForm';
@@ -12,6 +12,19 @@ const Index = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const { toast } = useToast();
   
+  // localStorage'dan talepleri yükle
+  useEffect(() => {
+    const savedTickets = localStorage.getItem('tickets');
+    if (savedTickets) {
+      setTickets(JSON.parse(savedTickets));
+    }
+  }, []);
+  
+  // Talep değişikliklerini localStorage'a kaydet
+  useEffect(() => {
+    localStorage.setItem('tickets', JSON.stringify(tickets));
+  }, [tickets]);
+  
   const handleAddTicket = (newTicket: {
     title: string;
     description: string;
@@ -20,7 +33,7 @@ const Index = () => {
     createdBySurname: string;
     createdByDepartment: Department;
   }) => {
-    // Gerçek bir uygulamada, bu bir sunucuya gönderilir
+    // Yeni bir ticket oluştur
     const ticket: Ticket = {
       id: `ticket-${Date.now()}`,
       ...newTicket,
@@ -31,7 +44,12 @@ const Index = () => {
       createdAt: new Date().toISOString()
     };
     
-    setTickets([ticket, ...tickets]);
+    // Mevcut ticketların başına yeni ticket ekle
+    const updatedTickets = [ticket, ...tickets];
+    setTickets(updatedTickets);
+    
+    // localStorage'a kaydet
+    localStorage.setItem('tickets', JSON.stringify(updatedTickets));
     
     toast({
       title: "Talep Oluşturuldu",

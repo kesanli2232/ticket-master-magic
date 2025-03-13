@@ -57,69 +57,8 @@ export const priorities: Priority[] = [
 export const assignees: AssignedTo[] = ['Emir', 'Ahmet', 'Atakan', 'Görkem'];
 
 export const generateMockTickets = (): Ticket[] => {
-  const mockTickets: Ticket[] = [];
-  
-  const titles = [
-    'İnsan Kaynakları birimindeki yazıcı çalışmıyor',
-    'E-Belediye portalına giriş sorunu',
-    'Fen İşleri ofisinde su sızıntısı',
-    'Destek Hizmetleri biriminde internet bağlantı sorunu',
-    'Evrak işleme gecikmesi'
-  ];
-  
-  const descriptions = [
-    'Ana yazıcı bir hata kodu gösteriyor ve hiçbir belge yazdırmıyor.',
-    'Kullanıcılar sabahtan beri E-Belediye portalına giriş yapamıyor.',
-    'Tavandan su sızıntısı var ve acil müdahale gerekiyor.',
-    'İnternet bağlantısı kesintili ve günlük işlemleri etkiliyor.',
-    'Belgeler sistemde işlenmesi çok uzun sürüyor.'
-  ];
-  
-  const names = ['Ali', 'Ayşe', 'Mehmet', 'Fatma', 'Mustafa'];
-  const surnames = ['Yılmaz', 'Kaya', 'Demir', 'Çelik', 'Şahin'];
-  
-  for (let i = 1; i <= 10; i++) {
-    const titleIndex = Math.floor(Math.random() * titles.length);
-    const descIndex = Math.floor(Math.random() * descriptions.length);
-    const nameIndex = Math.floor(Math.random() * names.length);
-    const surnameIndex = Math.floor(Math.random() * surnames.length);
-    const deptIndex = Math.floor(Math.random() * departments.length);
-    const categoryIndex = Math.floor(Math.random() * categories.length);
-    
-    const randomCategory = categories[categoryIndex];
-    let randomPriority: Priority;
-    
-    // "Yazıcı Sorunu" kategorisi için otomatik olarak "Çok Önemli" önceliği atama
-    if (randomCategory === 'Yazıcı Sorunu') {
-      randomPriority = 'Çok Önemli';
-    } else {
-      const priorityIndex = Math.floor(Math.random() * priorities.length);
-      randomPriority = priorities[priorityIndex];
-    }
-    
-    const statusIndex = Math.floor(Math.random() * statuses.length);
-    const assigneeIndex = Math.floor(Math.random() * assignees.length);
-    
-    // Son 30 gün içinde rastgele bir tarih oluşturma
-    const date = new Date();
-    date.setDate(date.getDate() - Math.floor(Math.random() * 30));
-    
-    mockTickets.push({
-      id: `ticket-${i}`,
-      title: titles[titleIndex],
-      description: descriptions[descIndex],
-      status: statuses[statusIndex],
-      priority: randomPriority,
-      assignedTo: assignees[assigneeIndex],
-      category: randomCategory,
-      createdByName: names[nameIndex],
-      createdBySurname: surnames[surnameIndex],
-      createdByDepartment: departments[deptIndex],
-      createdAt: date.toISOString()
-    });
-  }
-  
-  return mockTickets;
+  // Boş bir dizi döndürerek otomatik ticket oluşturmayı durduruyoruz
+  return [];
 };
 
 export const findUserByUsername = (username: string): User | undefined => {

@@ -40,8 +40,8 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
     setTickets(updatedTickets);
     
     toast({
-      title: "Status Updated",
-      description: `Ticket has been marked as ${status}`,
+      title: "Durum Güncellendi",
+      description: `Talep durumu ${status} olarak değiştirildi`,
       duration: 3000
     });
   };
@@ -51,8 +51,8 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
     setTickets(updatedTickets);
     
     toast({
-      title: "Ticket Deleted",
-      description: "The ticket has been successfully deleted",
+      title: "Talep Silindi",
+      description: "Talep başarıyla silindi",
       duration: 3000
     });
   };
@@ -74,8 +74,8 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
     setEditingTicket(null);
     
     toast({
-      title: "Ticket Updated",
-      description: "The ticket has been successfully updated",
+      title: "Talep Güncellendi",
+      description: "Talep başarıyla güncellendi",
       duration: 3000
     });
   };
@@ -86,11 +86,11 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
       
       {filteredTickets.length === 0 ? (
         <div className="bg-muted/50 rounded-lg p-8 text-center">
-          <h3 className="text-lg font-medium mb-2">No tickets found</h3>
+          <h3 className="text-lg font-medium mb-2">Talep bulunamadı</h3>
           <p className="text-muted-foreground">
             {Object.keys(filters).length > 0 
-              ? "Try adjusting your filters to see more results"
-              : "No tickets have been created yet"}
+              ? "Daha fazla sonuç görmek için filtrelerinizi ayarlayın"
+              : "Henüz talep oluşturulmamış"}
           </p>
         </div>
       ) : (
@@ -112,14 +112,14 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Edit Ticket</DialogTitle>
+              <DialogTitle>Talebi Düzenle</DialogTitle>
               <DialogDescription>
-                Make changes to the ticket information below
+                Aşağıdan talep bilgilerini düzenleyebilirsiniz
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="edit-title">Title</Label>
+                <Label htmlFor="edit-title">Başlık</Label>
                 <Input
                   id="edit-title"
                   value={editingTicket.title}
@@ -128,7 +128,7 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="edit-description">Description</Label>
+                <Label htmlFor="edit-description">Açıklama</Label>
                 <Textarea
                   id="edit-description"
                   value={editingTicket.description}
@@ -139,13 +139,13 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="edit-status">Status</Label>
+                  <Label htmlFor="edit-status">Durum</Label>
                   <Select
                     value={editingTicket.status}
                     onValueChange={(value) => setEditingTicket({ ...editingTicket, status: value as Status })}
                   >
                     <SelectTrigger id="edit-status">
-                      <SelectValue placeholder="Select status" />
+                      <SelectValue placeholder="Durum seçin" />
                     </SelectTrigger>
                     <SelectContent>
                       {statuses.map((status) => (
@@ -159,32 +159,32 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
                 
                 {role === 'admin' && (
                   <div className="space-y-2">
-                    <Label htmlFor="edit-priority">Priority</Label>
+                    <Label htmlFor="edit-priority">Öncelik</Label>
                     <Select
                       value={editingTicket.priority}
                       onValueChange={(value) => {
-                        // Auto set priority for Printer Issue
-                        if (editingTicket.category === 'Printer Issue' && value !== 'Very Important') {
+                        // Yazıcı Sorunu için otomatik öncelik ayarla
+                        if (editingTicket.category === 'Yazıcı Sorunu' && value !== 'Çok Önemli') {
                           toast({
-                            title: "Auto Priority",
-                            description: "Printer issues are always set to 'Very Important'",
+                            title: "Otomatik Öncelik",
+                            description: "Yazıcı sorunları her zaman 'Çok Önemli' olarak ayarlanır",
                             duration: 3000
                           });
-                          setEditingTicket({ ...editingTicket, priority: 'Very Important' });
+                          setEditingTicket({ ...editingTicket, priority: 'Çok Önemli' });
                         } else {
-                          setEditingTicket({ ...editingTicket, priority: value as any });
+                          setEditingTicket({ ...editingTicket, priority: value as Priority });
                         }
                       }}
                     >
                       <SelectTrigger id="edit-priority">
-                        <SelectValue placeholder="Select priority" />
+                        <SelectValue placeholder="Öncelik seçin" />
                       </SelectTrigger>
                       <SelectContent>
                         {priorities.map((priority) => (
                           <SelectItem 
                             key={priority} 
                             value={priority}
-                            disabled={editingTicket.category === 'Printer Issue' && priority !== 'Very Important'}
+                            disabled={editingTicket.category === 'Yazıcı Sorunu' && priority !== 'Çok Önemli'}
                           >
                             {priority}
                           </SelectItem>
@@ -199,13 +199,13 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
                 <>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="edit-assignee">Assignee</Label>
+                      <Label htmlFor="edit-assignee">Atanan Kişi</Label>
                       <Select
                         value={editingTicket.assignedTo}
-                        onValueChange={(value) => setEditingTicket({ ...editingTicket, assignedTo: value as any })}
+                        onValueChange={(value) => setEditingTicket({ ...editingTicket, assignedTo: value as AssignedTo })}
                       >
                         <SelectTrigger id="edit-assignee">
-                          <SelectValue placeholder="Select assignee" />
+                          <SelectValue placeholder="Atanan kişiyi seçin" />
                         </SelectTrigger>
                         <SelectContent>
                           {assignees.map((assignee) => (
@@ -218,22 +218,22 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="edit-category">Category</Label>
+                      <Label htmlFor="edit-category">Kategori</Label>
                       <Select
                         value={editingTicket.category}
                         onValueChange={(value) => {
-                          const newCategory = value as any;
-                          // Auto set priority for Printer Issue
-                          if (newCategory === 'Printer Issue') {
+                          const newCategory = value as Category;
+                          // Yazıcı Sorunu için otomatik öncelik ayarla
+                          if (newCategory === 'Yazıcı Sorunu') {
                             setEditingTicket({ 
                               ...editingTicket, 
                               category: newCategory,
-                              priority: 'Very Important'
+                              priority: 'Çok Önemli'
                             });
                             
                             toast({
-                              title: "Auto Priority",
-                              description: "Priority has been set to 'Very Important' for Printer Issue",
+                              title: "Otomatik Öncelik",
+                              description: "Yazıcı Sorunu için öncelik 'Çok Önemli' olarak ayarlandı",
                               duration: 3000
                             });
                           } else {
@@ -242,7 +242,7 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
                         }}
                       >
                         <SelectTrigger id="edit-category">
-                          <SelectValue placeholder="Select category" />
+                          <SelectValue placeholder="Kategori seçin" />
                         </SelectTrigger>
                         <SelectContent>
                           {categories.map((category) => (
@@ -259,9 +259,9 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-                Cancel
+                İptal
               </Button>
-              <Button onClick={handleSaveEdit}>Save Changes</Button>
+              <Button onClick={handleSaveEdit}>Değişiklikleri Kaydet</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

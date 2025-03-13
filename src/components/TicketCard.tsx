@@ -21,19 +21,19 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   
   const toggleStatus = () => {
-    const newStatus: Status = ticket.status === 'Open' ? 'Solved' : 'Open';
+    const newStatus: Status = ticket.status === 'Açık' ? 'Çözüldü' : 'Açık';
     onUpdateStatus(ticket.id, newStatus);
   };
   
   const getStatusColor = (status: Status) => {
-    return status === 'Open' ? 'bg-blue-500' : 'bg-green-500';
+    return status === 'Açık' ? 'bg-blue-500' : 'bg-green-500';
   };
   
   const getPriorityIcon = (priority: Priority) => {
     switch (priority) {
-      case 'Very Important':
+      case 'Çok Önemli':
         return <AlertTriangle className="h-4 w-4 text-ticket-high-priority" />;
-      case 'Important':
+      case 'Önemli':
         return <AlertCircle className="h-4 w-4 text-ticket-medium-priority" />;
       default:
         return <CheckCircle className="h-4 w-4 text-ticket-low-priority" />;
@@ -42,9 +42,9 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
   
   const getPriorityClass = (priority: Priority) => {
     switch (priority) {
-      case 'Very Important':
+      case 'Çok Önemli':
         return 'high-priority';
-      case 'Important':
+      case 'Önemli':
         return 'medium-priority';
       default:
         return 'low-priority';
@@ -52,16 +52,16 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
   };
   
   const getStatusClass = (status: Status) => {
-    return status === 'Open' ? 'open' : 'solved';
+    return status === 'Açık' ? 'open' : 'solved';
   };
   
   const getCategoryBadgeVariant = (category: Category) => {
     switch (category) {
-      case 'Printer Issue':
+      case 'Yazıcı Sorunu':
         return 'destructive';
-      case 'E-Municipality Issue':
+      case 'E-Belediye Sorunu':
         return 'default';
-      case 'Municipality':
+      case 'Belediye':
         return 'secondary';
       default:
         return 'outline';
@@ -71,34 +71,6 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return format(date, 'PPpp', { locale: tr });
-  };
-
-  const translatePriority = (priority: Priority) => {
-    switch (priority) {
-      case 'Very Important':
-        return 'Çok Önemli';
-      case 'Important':
-        return 'Önemli';
-      default:
-        return 'İkincil';
-    }
-  };
-
-  const translateStatus = (status: Status) => {
-    return status === 'Open' ? 'Açık' : 'Çözüldü';
-  };
-
-  const translateCategory = (category: Category) => {
-    switch (category) {
-      case 'Printer Issue':
-        return 'Yazıcı Sorunu';
-      case 'E-Municipality Issue':
-        return 'E-Belediye Sorunu';
-      case 'Municipality':
-        return 'Belediye';
-      default:
-        return 'Diğer';
-    }
   };
 
   return (
@@ -184,7 +156,7 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
       
       <div className="flex flex-wrap items-center gap-2 mt-auto">
         <Badge variant={getCategoryBadgeVariant(ticket.category)}>
-          {translateCategory(ticket.category)}
+          {ticket.category}
         </Badge>
         
         <Badge 
@@ -192,21 +164,21 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
           className="flex items-center gap-1"
         >
           {getPriorityIcon(ticket.priority)}
-          <span>{translatePriority(ticket.priority)}</span>
+          <span>{ticket.priority}</span>
         </Badge>
         
         <div className="ml-auto">
           <Button 
-            variant={ticket.status === 'Open' ? 'outline' : 'default'} 
+            variant={ticket.status === 'Açık' ? 'outline' : 'default'} 
             size="sm"
             className={
-              ticket.status === 'Open' 
+              ticket.status === 'Açık' 
                 ? 'border-blue-500 text-blue-500 hover:bg-blue-50' 
                 : 'bg-green-500 hover:bg-green-600'
             }
             onClick={toggleStatus}
           >
-            {translateStatus(ticket.status)}
+            {ticket.status}
           </Button>
         </div>
       </div>

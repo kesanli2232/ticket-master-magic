@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import Navbar from '@/components/Navbar';
 import TicketList from '@/components/TicketList';
-import { Ticket, Status } from '@/types';
+import { Ticket } from '@/types';
 import { generateMockTickets } from '@/lib/data';
 
 const Admin = () => {
@@ -20,16 +20,27 @@ const Admin = () => {
       return;
     }
     
-    // Örnek talepleri yükle
+    // Önceki taleplerden (yani localStorage'dan) yükle veya boş bir liste kullan
     setIsLoading(true);
     
-    // API çağrısını hafif bir gecikme ile simüle et
+    // localStorage'dan talepleri al
+    const savedTickets = localStorage.getItem('tickets');
+    
     setTimeout(() => {
-      const mockTickets = generateMockTickets();
-      setTickets(mockTickets);
+      if (savedTickets) {
+        setTickets(JSON.parse(savedTickets));
+      } else {
+        // Eğer localStorage'da talep yoksa, boş bir dizi ata
+        setTickets([]);
+      }
       setIsLoading(false);
-    }, 800);
+    }, 400);
   }, [isAuthenticated, navigate]);
+  
+  // Taleplerin değişikliklerini localStorage'a kaydet
+  useEffect(() => {
+    localStorage.setItem('tickets', JSON.stringify(tickets));
+  }, [tickets]);
   
   if (!isAuthenticated) {
     return null;
