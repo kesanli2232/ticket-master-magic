@@ -19,7 +19,7 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
     const newFilters = { ...filters };
     
     if (value) {
-      newFilters[key] = value as any; // Type assertion to handle the conversion
+      newFilters[key] = value as Status | Priority | AssignedTo | Category; // Doğru tip belirtme
     } else {
       delete newFilters[key];
     }

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import TicketCard from './TicketCard';
 import FilterBar from './FilterBar';
-import { Ticket, Status, TicketFilter } from '@/types';
+import { Ticket, Status, Priority, AssignedTo, Category, TicketFilter } from '@/types';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -170,7 +170,7 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
                             description: "Yazıcı sorunları her zaman 'Çok Önemli' olarak ayarlanır",
                             duration: 3000
                           });
-                          setEditingTicket({ ...editingTicket, priority: 'Çok Önemli' });
+                          setEditingTicket({ ...editingTicket, priority: 'Çok Önemli' as Priority });
                         } else {
                           setEditingTicket({ ...editingTicket, priority: value as Priority });
                         }
@@ -228,7 +228,7 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
                             setEditingTicket({ 
                               ...editingTicket, 
                               category: newCategory,
-                              priority: 'Çok Önemli'
+                              priority: 'Çok Önemli' as Priority
                             });
                             
                             toast({
