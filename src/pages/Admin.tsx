@@ -5,7 +5,6 @@ import { useAuth } from '@/context/AuthContext';
 import Navbar from '@/components/Navbar';
 import TicketList from '@/components/TicketList';
 import { Ticket } from '@/types';
-import { generateMockTickets } from '@/lib/data';
 
 const Admin = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -20,17 +19,23 @@ const Admin = () => {
       return;
     }
     
-    // Önceki taleplerden (yani localStorage'dan) yükle veya boş bir liste kullan
+    // localStorage'dan talepleri yükle
     setIsLoading(true);
     
-    // localStorage'dan talepleri al
     const savedTickets = localStorage.getItem('tickets');
     
     setTimeout(() => {
       if (savedTickets) {
-        setTickets(JSON.parse(savedTickets));
+        try {
+          const parsedTickets = JSON.parse(savedTickets);
+          setTickets(parsedTickets);
+          console.log('Tickets loaded from localStorage:', parsedTickets);
+        } catch (error) {
+          console.error('Tickets parsing error:', error);
+          setTickets([]);
+        }
       } else {
-        // Eğer localStorage'da talep yoksa, boş bir dizi ata
+        console.log('No tickets found in localStorage');
         setTickets([]);
       }
       setIsLoading(false);
@@ -38,9 +43,15 @@ const Admin = () => {
   }, [isAuthenticated, navigate]);
   
   // Taleplerin değişikliklerini localStorage'a kaydet
-  useEffect(() => {
-    localStorage.setItem('tickets', JSON.stringify(tickets));
-  }, [tickets]);
+  const updateTickets = (newTickets: Ticket[]) => {
+    setTickets(newTickets);
+    try {
+      localStorage.setItem('tickets', JSON.stringify(newTickets));
+      console.log('Tickets saved to localStorage:', newTickets);
+    } catch (error) {
+      console.error('Error saving tickets to localStorage:', error);
+    }
+  };
   
   if (!isAuthenticated) {
     return null;
@@ -65,7 +76,7 @@ const Admin = () => {
               <p className="mt-4 text-muted-foreground">Talepler yükleniyor...</p>
             </div>
           ) : (
-            <TicketList tickets={tickets} setTickets={setTickets} />
+            <TicketList tickets={tickets} setTickets={updateTickets} />
           )}
         </div>
       </main>

@@ -16,14 +16,18 @@ const Index = () => {
   useEffect(() => {
     const savedTickets = localStorage.getItem('tickets');
     if (savedTickets) {
-      setTickets(JSON.parse(savedTickets));
+      try {
+        const parsedTickets = JSON.parse(savedTickets);
+        setTickets(parsedTickets);
+        console.log('Index: Tickets loaded from localStorage:', parsedTickets);
+      } catch (error) {
+        console.error('Index: Tickets parsing error:', error);
+        setTickets([]);
+      }
+    } else {
+      console.log('Index: No tickets found in localStorage');
     }
   }, []);
-  
-  // Talep değişikliklerini localStorage'a kaydet
-  useEffect(() => {
-    localStorage.setItem('tickets', JSON.stringify(tickets));
-  }, [tickets]);
   
   const handleAddTicket = (newTicket: {
     title: string;
@@ -49,7 +53,12 @@ const Index = () => {
     setTickets(updatedTickets);
     
     // localStorage'a kaydet
-    localStorage.setItem('tickets', JSON.stringify(updatedTickets));
+    try {
+      localStorage.setItem('tickets', JSON.stringify(updatedTickets));
+      console.log('Index: Tickets saved to localStorage:', updatedTickets);
+    } catch (error) {
+      console.error('Index: Error saving tickets to localStorage:', error);
+    }
     
     toast({
       title: "Talep Oluşturuldu",
