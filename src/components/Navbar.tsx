@@ -35,14 +35,14 @@ const Navbar = () => {
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/" className="flex items-center space-x-2">
           <MessageSquare className="h-6 w-6 text-primary" />
-          <span className="font-medium text-lg tracking-tight">Ticket System</span>
+          <span className="font-medium text-lg tracking-tight">Destek Talep Sistemi</span>
         </Link>
         
         <div className="flex items-center space-x-4">
           <Link to="/">
             <Button variant="ghost" size="sm" className="flex items-center gap-1">
               <Home className="h-4 w-4" />
-              <span>Home</span>
+              <span>Ana Sayfa</span>
             </Button>
           </Link>
           
@@ -50,24 +50,24 @@ const Navbar = () => {
             <>
               <Link to="/admin">
                 <Button variant={location.pathname === '/admin' ? "secondary" : "ghost"} size="sm">
-                  Dashboard
+                  Kontrol Paneli
                 </Button>
               </Link>
               
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <User className="h-4 w-4" />
-                <span>{user?.username} ({user?.role})</span>
+                <span>{user?.username} ({user?.role === 'admin' ? 'Yönetici' : 'İzleyici'})</span>
               </div>
               
               <Button variant="ghost" size="sm" onClick={logout} className="flex items-center gap-1">
                 <LogOut className="h-4 w-4" />
-                <span>Logout</span>
+                <span>Çıkış</span>
               </Button>
             </>
           ) : (
             <Link to="/login">
               <Button variant={location.pathname === '/login' ? "secondary" : "ghost"} size="sm">
-                Login
+                Giriş
               </Button>
             </Link>
           )}

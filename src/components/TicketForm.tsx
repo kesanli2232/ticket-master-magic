@@ -38,8 +38,8 @@ const TicketForm = ({ addTicket }: TicketFormProps) => {
 
     if (!title || !description || !category || !name || !surname || !department) {
       toast({
-        title: "Validation Error",
-        description: "Please fill in all fields",
+        title: "Doğrulama Hatası",
+        description: "Lütfen tüm alanları doldurun",
         variant: "destructive",
       });
       setIsSubmitting(false);
@@ -66,8 +66,8 @@ const TicketForm = ({ addTicket }: TicketFormProps) => {
       setDepartment(departments[0]);
       
       toast({
-        title: "Ticket Created",
-        description: "Your ticket has been successfully submitted",
+        title: "Talep Oluşturuldu",
+        description: "Talebiniz başarıyla kaydedildi",
       });
       
       setIsSubmitting(false);
@@ -77,16 +77,16 @@ const TicketForm = ({ addTicket }: TicketFormProps) => {
   return (
     <Card className="w-full max-w-xl mx-auto animate-fadeIn shadow-lg">
       <CardHeader>
-        <CardTitle className="text-2xl">Submit a New Ticket</CardTitle>
-        <CardDescription>Fill in the details to create a new support ticket</CardDescription>
+        <CardTitle className="text-2xl">Yeni Talep Oluştur</CardTitle>
+        <CardDescription>Yeni bir destek talebi oluşturmak için aşağıdaki bilgileri doldurun</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title">Başlık</Label>
             <Input
               id="title"
-              placeholder="Brief description of the issue"
+              placeholder="Sorunun kısa açıklaması"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               autoComplete="off"
@@ -94,10 +94,10 @@ const TicketForm = ({ addTicket }: TicketFormProps) => {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">Açıklama</Label>
             <Textarea
               id="description"
-              placeholder="Detailed explanation of the issue"
+              placeholder="Sorunun detaylı açıklaması"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
@@ -105,18 +105,20 @@ const TicketForm = ({ addTicket }: TicketFormProps) => {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="category">Category</Label>
+            <Label htmlFor="category">Kategori</Label>
             <Select
               value={category}
               onValueChange={(value) => setCategory(value as Category)}
             >
               <SelectTrigger id="category">
-                <SelectValue placeholder="Select category" />
+                <SelectValue placeholder="Kategori seçin" />
               </SelectTrigger>
               <SelectContent>
                 {categories.map((cat) => (
                   <SelectItem key={cat} value={cat}>
-                    {cat}
+                    {cat === 'Printer Issue' ? 'Yazıcı Sorunu' : 
+                     cat === 'E-Municipality Issue' ? 'E-Belediye Sorunu' : 
+                     cat === 'Municipality' ? 'Belediye' : 'Diğer'}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -125,10 +127,10 @@ const TicketForm = ({ addTicket }: TicketFormProps) => {
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="name">First Name</Label>
+              <Label htmlFor="name">Ad</Label>
               <Input
                 id="name"
-                placeholder="Your first name"
+                placeholder="Adınız"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 autoComplete="off"
@@ -136,10 +138,10 @@ const TicketForm = ({ addTicket }: TicketFormProps) => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="surname">Last Name</Label>
+              <Label htmlFor="surname">Soyad</Label>
               <Input
                 id="surname"
-                placeholder="Your last name"
+                placeholder="Soyadınız"
                 value={surname}
                 onChange={(e) => setSurname(e.target.value)}
                 autoComplete="off"
@@ -148,13 +150,13 @@ const TicketForm = ({ addTicket }: TicketFormProps) => {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="department">Department</Label>
+            <Label htmlFor="department">Çalıştığınız Birim</Label>
             <Select
               value={department}
               onValueChange={(value) => setDepartment(value as Department)}
             >
               <SelectTrigger id="department">
-                <SelectValue placeholder="Select department" />
+                <SelectValue placeholder="Birim seçin" />
               </SelectTrigger>
               <SelectContent>
                 {departments.map((dept) => (
@@ -174,7 +176,7 @@ const TicketForm = ({ addTicket }: TicketFormProps) => {
             disabled={isSubmitting}
           >
             <Send className="h-4 w-4" />
-            <span>{isSubmitting ? 'Submitting...' : 'Submit Ticket'}</span>
+            <span>{isSubmitting ? 'Gönderiliyor...' : 'Talebi Gönder'}</span>
           </Button>
         </CardFooter>
       </form>

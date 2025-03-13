@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { format } from 'date-fns';
+import { tr } from 'date-fns/locale';
 import { Pencil, Trash2, AlertTriangle, CheckCircle, AlertCircle, Calendar, User, Briefcase, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -69,7 +70,35 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
   
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return format(date, 'PPpp');
+    return format(date, 'PPpp', { locale: tr });
+  };
+
+  const translatePriority = (priority: Priority) => {
+    switch (priority) {
+      case 'Very Important':
+        return 'Çok Önemli';
+      case 'Important':
+        return 'Önemli';
+      default:
+        return 'İkincil';
+    }
+  };
+
+  const translateStatus = (status: Status) => {
+    return status === 'Open' ? 'Açık' : 'Çözüldü';
+  };
+
+  const translateCategory = (category: Category) => {
+    switch (category) {
+      case 'Printer Issue':
+        return 'Yazıcı Sorunu';
+      case 'E-Municipality Issue':
+        return 'E-Belediye Sorunu';
+      case 'Municipality':
+        return 'Belediye';
+      default:
+        return 'Diğer';
+    }
   };
 
   return (
@@ -87,26 +116,26 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
                 onClick={() => onEdit(ticket)}
               >
                 <Pencil className="h-4 w-4" />
-                <span className="sr-only">Edit</span>
+                <span className="sr-only">Düzenle</span>
               </Button>
               
               <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                 <DialogTrigger asChild>
                   <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                     <Trash2 className="h-4 w-4 text-destructive" />
-                    <span className="sr-only">Delete</span>
+                    <span className="sr-only">Sil</span>
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Delete Ticket</DialogTitle>
+                    <DialogTitle>Talebi Sil</DialogTitle>
                     <DialogDescription>
-                      Are you sure you want to delete this ticket? This action cannot be undone.
+                      Bu talebi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter>
                     <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
-                      Cancel
+                      İptal
                     </Button>
                     <Button 
                       variant="destructive" 
@@ -115,7 +144,7 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
                         setIsDeleteDialogOpen(false);
                       }}
                     >
-                      Delete
+                      Sil
                     </Button>
                   </DialogFooter>
                 </DialogContent>
@@ -148,14 +177,14 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
         <div className="flex items-center text-sm">
           <Clock className="h-4 w-4 mr-1.5" />
           <span title={formatDate(ticket.createdAt)}>
-            {format(new Date(ticket.createdAt), 'PP')}
+            {format(new Date(ticket.createdAt), 'PP', { locale: tr })}
           </span>
         </div>
       </div>
       
       <div className="flex flex-wrap items-center gap-2 mt-auto">
         <Badge variant={getCategoryBadgeVariant(ticket.category)}>
-          {ticket.category}
+          {translateCategory(ticket.category)}
         </Badge>
         
         <Badge 
@@ -163,7 +192,7 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
           className="flex items-center gap-1"
         >
           {getPriorityIcon(ticket.priority)}
-          <span>{ticket.priority}</span>
+          <span>{translatePriority(ticket.priority)}</span>
         </Badge>
         
         <div className="ml-auto">
@@ -177,7 +206,7 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
             }
             onClick={toggleStatus}
           >
-            {ticket.status}
+            {translateStatus(ticket.status)}
           </Button>
         </div>
       </div>

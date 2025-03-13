@@ -19,7 +19,7 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
     const newFilters = { ...filters };
     
     if (value) {
-      newFilters[key] = value as any;
+      newFilters[key] = value;
     } else {
       delete newFilters[key];
     }
@@ -45,7 +45,7 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium flex items-center gap-2">
           <Filter className="h-4 w-4" />
-          <span>Filters</span>
+          <span>Filtreler</span>
           {Object.keys(filters).length > 0 && (
             <Badge variant="secondary" className="ml-2">
               {Object.keys(filters).length}
@@ -56,7 +56,7 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
         <div className="flex gap-2">
           {Object.keys(filters).length > 0 && (
             <Button variant="ghost" size="sm" onClick={clearAllFilters} className="text-xs h-8">
-              Clear All
+              Tümünü Temizle
             </Button>
           )}
           
@@ -66,7 +66,7 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
             onClick={() => setIsExpanded(!isExpanded)}
             className="h-8"
           >
-            {isExpanded ? 'Collapse' : 'Expand'}
+            {isExpanded ? 'Daralt' : 'Genişlet'}
           </Button>
         </div>
       </div>
@@ -76,7 +76,10 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
           {Object.entries(filters).map(([key, value]) => (
             <Badge key={key} variant="outline" className="py-1.5">
               <span className="text-sm">
-                {key}: <strong>{value}</strong>
+                {key === 'status' ? 'Durum' : 
+                 key === 'priority' ? 'Öncelik' : 
+                 key === 'assignedTo' ? 'Atanan' : 
+                 key === 'category' ? 'Kategori' : key}: <strong>{value}</strong>
               </span>
               <Button 
                 variant="ghost" 
@@ -85,7 +88,7 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
                 className="ml-1 h-4 w-4 p-0"
               >
                 <X className="h-3 w-3" />
-                <span className="sr-only">Remove {key} filter</span>
+                <span className="sr-only">{key} filtresini kaldır</span>
               </Button>
             </Badge>
           ))}
@@ -100,13 +103,13 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
               onValueChange={(value) => handleFilterChange('status', value || undefined)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Filter by status" />
+                <SelectValue placeholder="Duruma göre filtrele" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any Status</SelectItem>
+                <SelectItem value="">Herhangi Bir Durum</SelectItem>
                 {statuses.map((status) => (
                   <SelectItem key={status} value={status}>
-                    {status}
+                    {status === 'Open' ? 'Açık' : 'Çözüldü'}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -119,13 +122,14 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
               onValueChange={(value) => handleFilterChange('priority', value || undefined)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Filter by priority" />
+                <SelectValue placeholder="Önceliğe göre filtrele" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any Priority</SelectItem>
+                <SelectItem value="">Herhangi Bir Öncelik</SelectItem>
                 {priorities.map((priority) => (
                   <SelectItem key={priority} value={priority}>
-                    {priority}
+                    {priority === 'Very Important' ? 'Çok Önemli' : 
+                     priority === 'Important' ? 'Önemli' : 'İkincil'}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -138,10 +142,10 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
               onValueChange={(value) => handleFilterChange('assignedTo', value || undefined)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Filter by assignee" />
+                <SelectValue placeholder="Atanan kişiye göre filtrele" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any Assignee</SelectItem>
+                <SelectItem value="">Herhangi Bir Atanan</SelectItem>
                 {assignees.map((assignee) => (
                   <SelectItem key={assignee} value={assignee}>
                     {assignee}
@@ -157,13 +161,15 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
               onValueChange={(value) => handleFilterChange('category', value || undefined)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Filter by category" />
+                <SelectValue placeholder="Kategoriye göre filtrele" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any Category</SelectItem>
+                <SelectItem value="">Herhangi Bir Kategori</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category} value={category}>
-                    {category}
+                    {category === 'Printer Issue' ? 'Yazıcı Sorunu' : 
+                     category === 'E-Municipality Issue' ? 'E-Belediye Sorunu' : 
+                     category === 'Municipality' ? 'Belediye' : 'Diğer'}
                   </SelectItem>
                 ))}
               </SelectContent>
