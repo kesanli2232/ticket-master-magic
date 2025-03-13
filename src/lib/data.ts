@@ -5,53 +5,53 @@ export const users: User[] = [
   {
     id: '1',
     username: 'admin',
-    password: 'admin123', // In a real app, this would be hashed
+    password: 'admin123', // Gerçek bir uygulamada hashlenmesi gerekir
     role: 'admin'
   },
   {
     id: '2',
     username: 'viewer',
-    password: 'viewer123', // In a real app, this would be hashed
+    password: 'viewer123', // Gerçek bir uygulamada hashlenmesi gerekir
     role: 'viewer'
   }
 ];
 
 export const departments: Department[] = [
-  'Disaster Affairs',
-  'Information Technology',
-  'Support Services',
-  'Real Estate Expropriation',
-  'Public Works',
-  'Legal Affairs',
-  'Climate Change Zero Waste',
-  'Zoning and Urbanism',
-  'Human Resources and Training',
-  'Fire Department',
-  'Culture and Social Affairs',
-  'Machinery Maintenance and Repair',
-  'Financial Services',
-  'Parks and Gardens',
-  'Social Support Services',
-  'Water and Sewage',
-  'Cleaning Services',
-  'Veterinary Affairs',
-  'Writing Affairs',
-  'Municipal Police'
+  'Afet İşleri Müdürlüğü',
+  'Bilgi İşlem Müdürlüğü',
+  'Destek Hizmetleri Müdürlüğü',
+  'Emlak İstimlak Müdürlüğü',
+  'Fen İşleri Müdürlüğü',
+  'Hukuk İşleri Müdürlüğü',
+  'İklim Değişikliği Sıfır Atık Müdürlüğü',
+  'İmar ve Şehircilik Müdürlüğü',
+  'İnsan Kaynakları ve Eğitim Müdürlüğü',
+  'İtfaiye Müdürlüğü',
+  'Kültür ve Sosyal İşler Müdürlüğü',
+  'Makine İkmal Bakım ve Onarım Müdürlüğü',
+  'Mali Hizmetler Müdürlüğü',
+  'Park Bahçeler Müdürlüğü',
+  'Sosyal Destek Hizmetleri Müdürlüğü',
+  'Su ve Kanalizasyon Müdürlüğü',
+  'Temizlik İşleri Müdürlüğü',
+  'Veteriner İşleri Müdürlüğü',
+  'Yazı İşleri Müdürlüğü',
+  'Zabıta Müdürlüğü'
 ];
 
 export const categories: Category[] = [
-  'Municipality',
-  'Printer Issue',
-  'E-Municipality Issue',
-  'Other'
+  'Belediye',
+  'Yazıcı Sorunu',
+  'E-Belediye Sorunu',
+  'Diğer'
 ];
 
-export const statuses: Status[] = ['Open', 'Solved'];
+export const statuses: Status[] = ['Açık', 'Çözüldü'];
 
 export const priorities: Priority[] = [
-  'Very Important',
-  'Important',
-  'Secondary'
+  'Çok Önemli',
+  'Önemli',
+  'İkincil'
 ];
 
 export const assignees: AssignedTo[] = ['Emir', 'Ahmet', 'Atakan', 'Görkem'];
@@ -60,19 +60,19 @@ export const generateMockTickets = (): Ticket[] => {
   const mockTickets: Ticket[] = [];
   
   const titles = [
-    'Printer not working in HR department',
-    'E-Municipality portal login issue',
-    'Water leak in Public Works office',
-    'Internet connection problem in Support Services',
-    'Document processing delay'
+    'İnsan Kaynakları birimindeki yazıcı çalışmıyor',
+    'E-Belediye portalına giriş sorunu',
+    'Fen İşleri ofisinde su sızıntısı',
+    'Destek Hizmetleri biriminde internet bağlantı sorunu',
+    'Evrak işleme gecikmesi'
   ];
   
   const descriptions = [
-    'The main printer is showing an error code and not printing any documents.',
-    'Users are unable to log in to the E-Municipality portal since the morning.',
-    'There is a water leak from the ceiling that needs immediate attention.',
-    'The internet connection is intermittent and affecting daily operations.',
-    'Documents are taking too long to process in the system.'
+    'Ana yazıcı bir hata kodu gösteriyor ve hiçbir belge yazdırmıyor.',
+    'Kullanıcılar sabahtan beri E-Belediye portalına giriş yapamıyor.',
+    'Tavandan su sızıntısı var ve acil müdahale gerekiyor.',
+    'İnternet bağlantısı kesintili ve günlük işlemleri etkiliyor.',
+    'Belgeler sistemde işlenmesi çok uzun sürüyor.'
   ];
   
   const names = ['Ali', 'Ayşe', 'Mehmet', 'Fatma', 'Mustafa'];
@@ -89,9 +89,9 @@ export const generateMockTickets = (): Ticket[] => {
     const randomCategory = categories[categoryIndex];
     let randomPriority: Priority;
     
-    // Auto-assign "Very Important" priority for "Printer Issue" category
-    if (randomCategory === 'Printer Issue') {
-      randomPriority = 'Very Important';
+    // "Yazıcı Sorunu" kategorisi için otomatik olarak "Çok Önemli" önceliği atama
+    if (randomCategory === 'Yazıcı Sorunu') {
+      randomPriority = 'Çok Önemli';
     } else {
       const priorityIndex = Math.floor(Math.random() * priorities.length);
       randomPriority = priorities[priorityIndex];
@@ -100,7 +100,7 @@ export const generateMockTickets = (): Ticket[] => {
     const statusIndex = Math.floor(Math.random() * statuses.length);
     const assigneeIndex = Math.floor(Math.random() * assignees.length);
     
-    // Generate a random date within the last 30 days
+    // Son 30 gün içinde rastgele bir tarih oluşturma
     const date = new Date();
     date.setDate(date.getDate() - Math.floor(Math.random() * 30));
     

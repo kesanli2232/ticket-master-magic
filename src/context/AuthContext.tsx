@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check if user data exists in sessionStorage
+    // Kullanıcı verilerinin sessionStorage'da olup olmadığını kontrol et
     const storedUser = sessionStorage.getItem('user');
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
@@ -39,12 +39,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setRole(foundUser.role);
       setIsAuthenticated(true);
       
-      // Store user in sessionStorage
+      // Kullanıcıyı sessionStorage'a kaydet
       sessionStorage.setItem('user', JSON.stringify(foundUser));
       
       toast({
-        title: "Login successful",
-        description: `Welcome back, ${username}!`,
+        title: "Giriş başarılı",
+        description: `Hoş geldiniz, ${username}!`,
         duration: 3000
       });
       
@@ -52,8 +52,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     
     toast({
-      title: "Login failed",
-      description: "Invalid username or password",
+      title: "Giriş başarısız",
+      description: "Geçersiz kullanıcı adı veya şifre",
       variant: "destructive",
       duration: 3000
     });
@@ -66,12 +66,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setRole(null);
     setIsAuthenticated(false);
     
-    // Clear user data from sessionStorage
+    // Kullanıcı verilerini sessionStorage'dan temizle
     sessionStorage.removeItem('user');
     
     toast({
-      title: "Logged out",
-      description: "You have been successfully logged out",
+      title: "Çıkış yapıldı",
+      description: "Başarıyla çıkış yaptınız",
       duration: 3000
     });
   };
@@ -86,7 +86,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuth, AuthProvider içinde kullanılmalıdır');
   }
   return context;
 };

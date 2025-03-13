@@ -19,7 +19,7 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Add a small delay to simulate a network request
+    // Ağ isteğini simüle etmek için küçük bir gecikme ekleyin
     setTimeout(() => {
       const success = login(username, password);
       
@@ -40,18 +40,18 @@ const Login = () => {
               <MessageSquare className="h-8 w-8 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-2xl">Login to Ticket System</CardTitle>
-          <CardDescription>Enter your credentials to access the admin panel</CardDescription>
+          <CardTitle className="text-2xl">Talep Sistemine Giriş</CardTitle>
+          <CardDescription>Yönetim paneline erişmek için giriş bilgilerinizi girin</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">Kullanıcı Adı</Label>
               <div className="relative">
                 <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="username"
-                  placeholder="Enter your username"
+                  placeholder="Kullanıcı adınızı girin"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="pl-10"
@@ -59,31 +59,31 @@ const Login = () => {
                 />
               </div>
               <p className="text-xs text-muted-foreground">
-                Try: <code className="text-foreground">admin</code> or <code className="text-foreground">viewer</code>
+                Deneyin: <code className="text-foreground">admin</code> veya <code className="text-foreground">viewer</code>
               </p>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Şifre</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Enter your password"
+                  placeholder="Şifrenizi girin"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10"
                 />
               </div>
               <p className="text-xs text-muted-foreground">
-                Password: <code className="text-foreground">admin123</code> or <code className="text-foreground">viewer123</code>
+                Şifre: <code className="text-foreground">admin123</code> veya <code className="text-foreground">viewer123</code>
               </p>
             </div>
           </CardContent>
           <CardFooter>
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Logging in...' : 'Login'}
+              {isLoading ? 'Giriş yapılıyor...' : 'Giriş Yap'}
             </Button>
           </CardFooter>
         </form>

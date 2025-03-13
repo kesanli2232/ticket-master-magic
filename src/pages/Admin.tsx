@@ -14,16 +14,16 @@ const Admin = () => {
   const navigate = useNavigate();
   
   useEffect(() => {
-    // Check authentication
+    // Kimlik doğrulamasını kontrol et
     if (!isAuthenticated) {
       navigate('/login');
       return;
     }
     
-    // Load mock tickets
+    // Örnek talepleri yükle
     setIsLoading(true);
     
-    // Simulate API call with a slight delay
+    // API çağrısını hafif bir gecikme ile simüle et
     setTimeout(() => {
       const mockTickets = generateMockTickets();
       setTickets(mockTickets);
@@ -42,16 +42,16 @@ const Admin = () => {
       <main className="container mx-auto pt-24 pb-16 px-4">
         <div className="page-transition">
           <header className="mb-10">
-            <h1 className="text-3xl font-semibold mb-2">Ticket Management</h1>
+            <h1 className="text-3xl font-semibold mb-2">Talep Yönetimi</h1>
             <p className="text-muted-foreground">
-              View, edit, and manage all support tickets
+              Tüm destek taleplerini görüntüleyin, düzenleyin ve yönetin
             </p>
           </header>
           
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="w-16 h-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin"></div>
-              <p className="mt-4 text-muted-foreground">Loading tickets...</p>
+              <p className="mt-4 text-muted-foreground">Talepler yükleniyor...</p>
             </div>
           ) : (
             <TicketList tickets={tickets} setTickets={setTickets} />

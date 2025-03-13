@@ -20,22 +20,22 @@ const Index = () => {
     createdBySurname: string;
     createdByDepartment: Department;
   }) => {
-    // In a real application, this would be sent to a server
+    // Gerçek bir uygulamada, bu bir sunucuya gönderilir
     const ticket: Ticket = {
       id: `ticket-${Date.now()}`,
       ...newTicket,
-      status: 'Open',
-      // Auto-assign 'Very Important' priority for 'Printer Issue' category
-      priority: newTicket.category === 'Printer Issue' ? 'Very Important' : 'Secondary',
-      assignedTo: 'Emir', // Default assignee
+      status: 'Açık',
+      // 'Yazıcı Sorunu' kategorisi için otomatik olarak 'Çok Önemli' önceliği ata
+      priority: newTicket.category === 'Yazıcı Sorunu' ? 'Çok Önemli' : 'İkincil',
+      assignedTo: 'Emir', // Varsayılan atanan kişi
       createdAt: new Date().toISOString()
     };
     
     setTickets([ticket, ...tickets]);
     
     toast({
-      title: "Ticket Created",
-      description: "Your ticket has been submitted successfully!",
+      title: "Talep Oluşturuldu",
+      description: "Talebiniz başarıyla gönderildi!",
       duration: 5000
     });
   };
@@ -47,36 +47,36 @@ const Index = () => {
       <main className="pt-24 pb-16">
         <section className="container mx-auto px-4">
           <div className="page-transition max-w-4xl mx-auto">
-            {/* Hero Section */}
+            {/* Hero Bölümü */}
             <div className="text-center mb-16">
               <div className="inline-flex items-center justify-center p-3 bg-secondary rounded-full mb-6">
                 <MessageSquare className="h-8 w-8 text-primary" />
               </div>
               <h1 className="text-4xl md:text-5xl font-semibold mb-4 tracking-tight">
-                Municipal Ticket Management System
+                Belediye Talep Yönetim Sistemi
               </h1>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-                Submit and track support requests easily with our streamlined ticket system
+                Sorunsuz talep sistemiyle destek taleplerini kolayca gönderin ve takip edin
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Link to="/admin">
                   <Button size="lg" className="gap-2">
-                    <span>Go to Dashboard</span>
+                    <span>Kontrol Paneline Git</span>
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </Link>
               </div>
             </div>
             
-            {/* Features Section */}
+            {/* Özellikler Bölümü */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
               <div className="bg-white/80 backdrop-blur-md rounded-lg p-6 shadow-sm border border-border">
                 <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
                   <MessageSquare className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-lg font-medium mb-2">Easy Submission</h3>
+                <h3 className="text-lg font-medium mb-2">Kolay Başvuru</h3>
                 <p className="text-muted-foreground">
-                  Create tickets quickly with our streamlined submission form
+                  Sorunsuz başvuru formumuzla talepleri hızlıca oluşturun
                 </p>
               </div>
               
@@ -84,9 +84,9 @@ const Index = () => {
                 <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
                   <CheckCircle2 className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-lg font-medium mb-2">Status Tracking</h3>
+                <h3 className="text-lg font-medium mb-2">Durum Takibi</h3>
                 <p className="text-muted-foreground">
-                  Track the status of your tickets from submission to resolution
+                  Taleplerinizin durumunu gönderimden çözüme kadar takip edin
                 </p>
               </div>
               
@@ -94,19 +94,19 @@ const Index = () => {
                 <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
                   <Activity className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-lg font-medium mb-2">Priority Management</h3>
+                <h3 className="text-lg font-medium mb-2">Öncelik Yönetimi</h3>
                 <p className="text-muted-foreground">
-                  Automatically prioritizes critical issues like printer problems
+                  Yazıcı sorunları gibi kritik konuları otomatik olarak önceliklendirir
                 </p>
               </div>
             </div>
             
-            {/* Form Section */}
+            {/* Form Bölümü */}
             <div className="mb-16">
               <div className="text-center mb-10">
-                <h2 className="text-2xl md:text-3xl font-semibold mb-4">Submit a New Ticket</h2>
+                <h2 className="text-2xl md:text-3xl font-semibold mb-4">Yeni Talep Oluştur</h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
-                  Fill out the form below to create a new support ticket. Our team will respond as soon as possible.
+                  Yeni bir destek talebi oluşturmak için aşağıdaki formu doldurun. Ekibimiz en kısa sürede yanıt verecektir.
                 </p>
               </div>
               
@@ -116,11 +116,11 @@ const Index = () => {
         </section>
       </main>
       
-      {/* Footer */}
+      {/* Altbilgi */}
       <footer className="bg-secondary py-8">
         <div className="container mx-auto px-4 text-center">
           <p className="text-muted-foreground">
-            &copy; {new Date().getFullYear()} Municipal Ticket Management System
+            &copy; {new Date().getFullYear()} Belediye Talep Yönetim Sistemi
           </p>
         </div>
       </footer>

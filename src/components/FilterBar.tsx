@@ -19,7 +19,7 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
     const newFilters = { ...filters };
     
     if (value) {
-      newFilters[key] = value;
+      newFilters[key] = value as any; // Type assertion to handle the conversion
     } else {
       delete newFilters[key];
     }
@@ -99,7 +99,7 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-2">
           <div>
             <Select 
-              value={filters.status} 
+              value={filters.status as string | undefined} 
               onValueChange={(value) => handleFilterChange('status', value || undefined)}
             >
               <SelectTrigger>
@@ -109,7 +109,7 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
                 <SelectItem value="">Herhangi Bir Durum</SelectItem>
                 {statuses.map((status) => (
                   <SelectItem key={status} value={status}>
-                    {status === 'Open' ? 'Açık' : 'Çözüldü'}
+                    {status}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -118,7 +118,7 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
           
           <div>
             <Select 
-              value={filters.priority} 
+              value={filters.priority as string | undefined} 
               onValueChange={(value) => handleFilterChange('priority', value || undefined)}
             >
               <SelectTrigger>
@@ -128,8 +128,7 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
                 <SelectItem value="">Herhangi Bir Öncelik</SelectItem>
                 {priorities.map((priority) => (
                   <SelectItem key={priority} value={priority}>
-                    {priority === 'Very Important' ? 'Çok Önemli' : 
-                     priority === 'Important' ? 'Önemli' : 'İkincil'}
+                    {priority}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -138,7 +137,7 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
           
           <div>
             <Select 
-              value={filters.assignedTo} 
+              value={filters.assignedTo as string | undefined} 
               onValueChange={(value) => handleFilterChange('assignedTo', value || undefined)}
             >
               <SelectTrigger>
@@ -157,7 +156,7 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
           
           <div>
             <Select 
-              value={filters.category} 
+              value={filters.category as string | undefined} 
               onValueChange={(value) => handleFilterChange('category', value || undefined)}
             >
               <SelectTrigger>
@@ -167,9 +166,7 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
                 <SelectItem value="">Herhangi Bir Kategori</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category} value={category}>
-                    {category === 'Printer Issue' ? 'Yazıcı Sorunu' : 
-                     category === 'E-Municipality Issue' ? 'E-Belediye Sorunu' : 
-                     category === 'Municipality' ? 'Belediye' : 'Diğer'}
+                    {category}
                   </SelectItem>
                 ))}
               </SelectContent>

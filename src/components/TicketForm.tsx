@@ -46,7 +46,7 @@ const TicketForm = ({ addTicket }: TicketFormProps) => {
       return;
     }
 
-    // Simulate server request
+    // Sunucu isteğini simüle etme
     setTimeout(() => {
       addTicket({
         title,
@@ -57,7 +57,7 @@ const TicketForm = ({ addTicket }: TicketFormProps) => {
         createdByDepartment: department
       });
 
-      // Reset form
+      // Formu sıfırlama
       setTitle('');
       setDescription('');
       setCategory(categories[0]);
@@ -116,9 +116,7 @@ const TicketForm = ({ addTicket }: TicketFormProps) => {
               <SelectContent>
                 {categories.map((cat) => (
                   <SelectItem key={cat} value={cat}>
-                    {cat === 'Printer Issue' ? 'Yazıcı Sorunu' : 
-                     cat === 'E-Municipality Issue' ? 'E-Belediye Sorunu' : 
-                     cat === 'Municipality' ? 'Belediye' : 'Diğer'}
+                    {cat}
                   </SelectItem>
                 ))}
               </SelectContent>

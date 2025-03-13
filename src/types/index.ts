@@ -8,31 +8,31 @@ export type User = {
   role: Role;
 };
 
-export type Status = 'Open' | 'Solved';
-export type Priority = 'Very Important' | 'Important' | 'Secondary';
+export type Status = 'Açık' | 'Çözüldü';
+export type Priority = 'Çok Önemli' | 'Önemli' | 'İkincil';
 export type AssignedTo = 'Emir' | 'Ahmet' | 'Atakan' | 'Görkem';
-export type Category = 'Municipality' | 'Printer Issue' | 'E-Municipality Issue' | 'Other';
+export type Category = 'Belediye' | 'Yazıcı Sorunu' | 'E-Belediye Sorunu' | 'Diğer';
 export type Department = 
-  | 'Disaster Affairs' 
-  | 'Information Technology' 
-  | 'Support Services'
-  | 'Real Estate Expropriation'
-  | 'Public Works'
-  | 'Legal Affairs'
-  | 'Climate Change Zero Waste'
-  | 'Zoning and Urbanism'
-  | 'Human Resources and Training'
-  | 'Fire Department'
-  | 'Culture and Social Affairs'
-  | 'Machinery Maintenance and Repair'
-  | 'Financial Services'
-  | 'Parks and Gardens'
-  | 'Social Support Services'
-  | 'Water and Sewage'
-  | 'Cleaning Services'
-  | 'Veterinary Affairs'
-  | 'Writing Affairs'
-  | 'Municipal Police';
+  | 'Afet İşleri Müdürlüğü' 
+  | 'Bilgi İşlem Müdürlüğü' 
+  | 'Destek Hizmetleri Müdürlüğü'
+  | 'Emlak İstimlak Müdürlüğü'
+  | 'Fen İşleri Müdürlüğü'
+  | 'Hukuk İşleri Müdürlüğü'
+  | 'İklim Değişikliği Sıfır Atık Müdürlüğü'
+  | 'İmar ve Şehircilik Müdürlüğü'
+  | 'İnsan Kaynakları ve Eğitim Müdürlüğü'
+  | 'İtfaiye Müdürlüğü'
+  | 'Kültür ve Sosyal İşler Müdürlüğü'
+  | 'Makine İkmal Bakım ve Onarım Müdürlüğü'
+  | 'Mali Hizmetler Müdürlüğü'
+  | 'Park Bahçeler Müdürlüğü'
+  | 'Sosyal Destek Hizmetleri Müdürlüğü'
+  | 'Su ve Kanalizasyon Müdürlüğü'
+  | 'Temizlik İşleri Müdürlüğü'
+  | 'Veteriner İşleri Müdürlüğü'
+  | 'Yazı İşleri Müdürlüğü'
+  | 'Zabıta Müdürlüğü';
 
 export type Ticket = {
   id: string;
