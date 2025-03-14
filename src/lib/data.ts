@@ -49,6 +49,19 @@ export const priorities: Priority[] = [
 
 export const assignees: AssignedTo[] = ['Emir', 'Ahmet', 'Atakan', 'Görkem'];
 
+// Function to get the current time in Istanbul (GMT+3)
+export const getIstanbulTime = () => {
+  const now = new Date();
+  const istanbulOffset = 3 * 60; // GMT+3 in minutes
+  const localOffset = now.getTimezoneOffset();
+  
+  // Calculate total offset in milliseconds (local to Istanbul)
+  const offsetMs = (localOffset + istanbulOffset) * 60 * 1000;
+  
+  // Create a new date object with Istanbul time
+  return new Date(now.getTime() + offsetMs);
+};
+
 export const generateMockTickets = (): Ticket[] => {
   // Boş bir dizi döndürerek otomatik ticket oluşturmayı durduruyoruz
   return [];
