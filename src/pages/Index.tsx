@@ -6,7 +6,7 @@ import TicketForm from '@/components/TicketForm';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Ticket, Category, Department } from '@/types';
-import { ChevronRight, MessageSquare, CheckCircle2, Clock, Activity } from 'lucide-react';
+import { ChevronRight, CheckCircle2, Clock, Activity } from 'lucide-react';
 
 const Index = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -77,7 +77,11 @@ const Index = () => {
             {/* Hero Bölümü */}
             <div className="text-center mb-16">
               <div className="inline-flex items-center justify-center p-3 bg-secondary rounded-full mb-6">
-                <MessageSquare className="h-8 w-8 text-primary" />
+                <img 
+                  src="/belediye_yeni_logo.png" 
+                  alt="Keşan Belediyesi" 
+                  className="h-8 w-8"
+                />
               </div>
               <h1 className="text-4xl md:text-5xl font-semibold mb-4 tracking-tight">
                 Belediye Talep Yönetim Sistemi
@@ -99,7 +103,11 @@ const Index = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
               <div className="bg-white/80 backdrop-blur-md rounded-lg p-6 shadow-sm border border-border">
                 <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
-                  <MessageSquare className="h-6 w-6 text-primary" />
+                  <img 
+                    src="/belediye_yeni_logo.png" 
+                    alt="Keşan Belediyesi" 
+                    className="h-6 w-6"
+                  />
                 </div>
                 <h3 className="text-lg font-medium mb-2">Kolay Başvuru</h3>
                 <p className="text-muted-foreground">

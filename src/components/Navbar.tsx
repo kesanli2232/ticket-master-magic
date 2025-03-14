@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
-import { MessageSquare, LogOut, User, Home } from 'lucide-react';
+import { LogOut, User, Home } from 'lucide-react';
 
 const Navbar = () => {
   const { isAuthenticated, logout, user } = useAuth();
@@ -34,7 +34,11 @@ const Navbar = () => {
     >
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/" className="flex items-center space-x-2">
-          <MessageSquare className="h-6 w-6 text-primary" />
+          <img 
+            src="/belediye_yeni_logo.png" 
+            alt="Keşan Belediyesi" 
+            className="h-8 w-8"
+          />
           <span className="font-medium text-lg tracking-tight">Destek Talep Sistemi</span>
         </Link>
         

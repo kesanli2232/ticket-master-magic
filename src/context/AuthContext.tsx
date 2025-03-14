@@ -21,13 +21,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Kullanıcı verilerinin sessionStorage'da olup olmadığını kontrol et
-    const storedUser = sessionStorage.getItem('user');
+    // Kullanıcı verilerinin localStorage'da olup olmadığını kontrol et
+    // sessionStorage yerine localStorage kullanarak oturum kalıcılığını sağla
+    const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser);
-      setRole(parsedUser.role);
-      setIsAuthenticated(true);
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+        setRole(parsedUser.role);
+        setIsAuthenticated(true);
+        console.log("Oturum bilgileri localStorage'dan yüklendi:", parsedUser.username);
+      } catch (error) {
+        console.error("Oturum bilgileri yüklenirken hata oluştu:", error);
+        // Hatalı veri varsa temizle
+        localStorage.removeItem('user');
+      }
     }
   }, []);
 
@@ -39,8 +47,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setRole(foundUser.role);
       setIsAuthenticated(true);
       
-      // Kullanıcıyı sessionStorage'a kaydet
-      sessionStorage.setItem('user', JSON.stringify(foundUser));
+      // Kullanıcıyı localStorage'a kaydet (sessionStorage yerine)
+      localStorage.setItem('user', JSON.stringify(foundUser));
       
       toast({
         title: "Giriş başarılı",
@@ -66,8 +74,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setRole(null);
     setIsAuthenticated(false);
     
-    // Kullanıcı verilerini sessionStorage'dan temizle
-    sessionStorage.removeItem('user');
+    // Kullanıcı verilerini localStorage'dan temizle
+    localStorage.removeItem('user');
     
     toast({
       title: "Çıkış yapıldı",
