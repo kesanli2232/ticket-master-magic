@@ -1,8 +1,9 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { assignees, categories, priorities, statuses } from '@/lib/data';
-import { TicketFilter, Status, Priority, AssignedTo, Category } from '@/types';
+import { assignees, priorities, statuses } from '@/lib/data';
+import { TicketFilter, Status, Priority, AssignedTo } from '@/types';
 import { X } from 'lucide-react';
 
 type FilterBarProps = {
@@ -23,8 +24,6 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
         newFilters[key] = value as Priority;
       } else if (key === 'assignedTo') {
         newFilters[key] = value as AssignedTo;
-      } else if (key === 'category') {
-        newFilters[key] = value as Category;
       }
     } else {
       delete newFilters[key];
@@ -78,20 +77,6 @@ const FilterBar = ({ onFilter }: FilterBarProps) => {
           {assignees.map((assignee) => (
             <SelectItem key={assignee} value={assignee}>
               {assignee}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      
-      {/* Category Filter */}
-      <Select onValueChange={(value) => handleFilterChange('category', value)}>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Kategori Seçin" defaultValue={filters.category || undefined} />
-        </SelectTrigger>
-        <SelectContent>
-          {categories.map((category) => (
-            <SelectItem key={category} value={category}>
-              {category}
             </SelectItem>
           ))}
         </SelectContent>

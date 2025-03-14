@@ -1,5 +1,5 @@
 
-import { User, Ticket, Department, Category, Status, Priority, AssignedTo } from '@/types';
+import { User, Ticket, Department, Status, Priority, AssignedTo } from '@/types';
 
 export const users: User[] = [
   {
@@ -37,13 +37,6 @@ export const departments: Department[] = [
   'Veteriner İşleri Müdürlüğü',
   'Yazı İşleri Müdürlüğü',
   'Zabıta Müdürlüğü'
-];
-
-export const categories: Category[] = [
-  'Belediye',
-  'Yazıcı Sorunu',
-  'E-Belediye Sorunu',
-  'Diğer'
 ];
 
 export const statuses: Status[] = ['Açık', 'Çözüldü'];
