@@ -62,6 +62,72 @@ export const getIstanbulTime = () => {
   return new Date(now.getTime() + offsetMs);
 };
 
+// Database functions for tickets
+export const DB = {
+  // Save tickets to localStorage
+  saveTickets: (tickets: Ticket[]): void => {
+    try {
+      localStorage.setItem('tickets', JSON.stringify(tickets));
+      console.log('Tickets saved successfully:', tickets.length);
+    } catch (error) {
+      console.error('Error saving tickets to localStorage:', error);
+    }
+  },
+
+  // Get all tickets from localStorage
+  getTickets: (): Ticket[] => {
+    try {
+      const savedTickets = localStorage.getItem('tickets');
+      if (!savedTickets) return [];
+      
+      const tickets = JSON.parse(savedTickets) as Ticket[];
+      return tickets;
+    } catch (error) {
+      console.error('Error retrieving tickets from localStorage:', error);
+      return [];
+    }
+  },
+
+  // Add a new ticket
+  addTicket: (ticket: Ticket): void => {
+    const tickets = DB.getTickets();
+    DB.saveTickets([ticket, ...tickets]);
+  },
+
+  // Update a ticket
+  updateTicket: (updatedTicket: Ticket): void => {
+    const tickets = DB.getTickets();
+    const updatedTickets = tickets.map(ticket => 
+      ticket.id === updatedTicket.id ? updatedTicket : ticket
+    );
+    DB.saveTickets(updatedTickets);
+  },
+
+  // Delete a ticket
+  deleteTicket: (id: string): void => {
+    const tickets = DB.getTickets();
+    const filteredTickets = tickets.filter(ticket => ticket.id !== id);
+    DB.saveTickets(filteredTickets);
+  },
+
+  // Remove tickets older than 7 days
+  cleanupOldTickets: (): void => {
+    const tickets = DB.getTickets();
+    const now = getIstanbulTime();
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    
+    const filteredTickets = tickets.filter(ticket => {
+      const ticketDate = new Date(ticket.createdAt);
+      return ticketDate >= sevenDaysAgo;
+    });
+    
+    if (tickets.length !== filteredTickets.length) {
+      console.log(`Removed ${tickets.length - filteredTickets.length} tickets older than 7 days`);
+      DB.saveTickets(filteredTickets);
+    }
+  }
+};
+
 export const generateMockTickets = (): Ticket[] => {
   // Boş bir dizi döndürerek otomatik ticket oluşturmayı durduruyoruz
   return [];

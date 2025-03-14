@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
@@ -7,39 +6,21 @@ import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Ticket, Department } from '@/types';
 import { ChevronRight, CheckCircle2, Clock, Activity } from 'lucide-react';
-
-// Function to get the current time in Istanbul (GMT+3)
-const getIstanbulTime = () => {
-  const now = new Date();
-  const istanbulOffset = 3 * 60; // GMT+3 in minutes
-  const localOffset = now.getTimezoneOffset();
-  
-  // Calculate total offset in milliseconds (local to Istanbul)
-  const offsetMs = (localOffset + istanbulOffset) * 60 * 1000;
-  
-  // Create a new date object with Istanbul time
-  return new Date(now.getTime() + offsetMs);
-};
+import { getIstanbulTime, DB } from '@/lib/data';
 
 const Index = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const { toast } = useToast();
   
-  // localStorage'dan talepleri yükle
+  // Load tickets from database
   useEffect(() => {
-    const savedTickets = localStorage.getItem('tickets');
-    if (savedTickets) {
-      try {
-        const parsedTickets = JSON.parse(savedTickets);
-        setTickets(parsedTickets);
-        console.log('Index: Tickets loaded from localStorage:', parsedTickets);
-      } catch (error) {
-        console.error('Index: Tickets parsing error:', error);
-        setTickets([]);
-      }
-    } else {
-      console.log('Index: No tickets found in localStorage');
-    }
+    // Clean up tickets older than 7 days
+    DB.cleanupOldTickets();
+    
+    // Get tickets from database
+    const tickets = DB.getTickets();
+    setTickets(tickets);
+    console.log('Index: Tickets loaded:', tickets.length);
   }, []);
   
   const handleAddTicket = (newTicket: {
@@ -49,27 +30,21 @@ const Index = () => {
     createdBySurname: string;
     createdByDepartment: Department;
   }) => {
-    // Yeni bir ticket oluştur - Istanbul saatini kullan
+    // Create a new ticket - use Istanbul time
     const ticket: Ticket = {
       id: `ticket-${Date.now()}`,
       ...newTicket,
       status: 'Açık',
       priority: 'İkincil',
-      assignedTo: 'Emir', // Varsayılan atanan kişi
+      assignedTo: 'Emir', // Default assignee
       createdAt: getIstanbulTime().toISOString()
     };
     
-    // Mevcut ticketların başına yeni ticket ekle
-    const updatedTickets = [ticket, ...tickets];
-    setTickets(updatedTickets);
+    // Add to database
+    DB.addTicket(ticket);
     
-    // localStorage'a kaydet
-    try {
-      localStorage.setItem('tickets', JSON.stringify(updatedTickets));
-      console.log('Index: Tickets saved to localStorage:', updatedTickets);
-    } catch (error) {
-      console.error('Index: Error saving tickets to localStorage:', error);
-    }
+    // Update local state - get fresh tickets from database
+    setTickets(DB.getTickets());
     
     toast({
       title: "Talep Oluşturuldu",
