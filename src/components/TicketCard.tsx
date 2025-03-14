@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
@@ -6,7 +5,7 @@ import { Pencil, Trash2, AlertTriangle, CheckCircle, AlertCircle, Calendar, User
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
-import { Ticket, Status, Priority, AssignedTo, Category } from '@/types';
+import { Ticket, Status, Priority, AssignedTo } from '@/types';
 import { useAuth } from '@/context/AuthContext';
 
 type TicketCardProps = {
@@ -55,22 +54,14 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
     return status === 'Açık' ? 'open' : 'solved';
   };
   
-  const getCategoryBadgeVariant = (category: Category) => {
-    switch (category) {
-      case 'Yazıcı Sorunu':
-        return 'destructive';
-      case 'E-Belediye Sorunu':
-        return 'default';
-      case 'Belediye':
-        return 'secondary';
-      default:
-        return 'outline';
-    }
-  };
-  
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return format(date, 'PPpp', { locale: tr });
+    try {
+      const date = new Date(dateString);
+      return format(date, 'PPpp', { locale: tr });
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return dateString;
+    }
   };
 
   return (
@@ -155,10 +146,6 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
       </div>
       
       <div className="flex flex-wrap items-center gap-2 mt-auto">
-        <Badge variant={getCategoryBadgeVariant(ticket.category)}>
-          {ticket.category}
-        </Badge>
-        
         <Badge 
           variant="outline" 
           className="flex items-center gap-1"

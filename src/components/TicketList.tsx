@@ -3,14 +3,14 @@ import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import TicketCard from './TicketCard';
 import FilterBar from './FilterBar';
-import { Ticket, Status, Priority, AssignedTo, Category, TicketFilter } from '@/types';
+import { Ticket, Status, Priority, AssignedTo, TicketFilter } from '@/types';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { assignees, categories, priorities, statuses } from '@/lib/data';
+import { assignees, priorities, statuses } from '@/lib/data';
 import { useAuth } from '@/context/AuthContext';
 
 type TicketListProps = {
@@ -29,7 +29,6 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
     if (filters.status && ticket.status !== filters.status) return false;
     if (filters.priority && ticket.priority !== filters.priority) return false;
     if (filters.assignedTo && ticket.assignedTo !== filters.assignedTo) return false;
-    if (filters.category && ticket.category !== filters.category) return false;
     return true;
   });
   
@@ -162,30 +161,14 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
                     <Label htmlFor="edit-priority">Öncelik</Label>
                     <Select
                       value={editingTicket.priority}
-                      onValueChange={(value) => {
-                        // Yazıcı Sorunu için otomatik öncelik ayarla
-                        if (editingTicket.category === 'Yazıcı Sorunu' && value !== 'Çok Önemli') {
-                          toast({
-                            title: "Otomatik Öncelik",
-                            description: "Yazıcı sorunları her zaman 'Çok Önemli' olarak ayarlanır",
-                            duration: 3000
-                          });
-                          setEditingTicket({ ...editingTicket, priority: 'Çok Önemli' as Priority });
-                        } else {
-                          setEditingTicket({ ...editingTicket, priority: value as Priority });
-                        }
-                      }}
+                      onValueChange={(value) => setEditingTicket({ ...editingTicket, priority: value as Priority })}
                     >
                       <SelectTrigger id="edit-priority">
                         <SelectValue placeholder="Öncelik seçin" />
                       </SelectTrigger>
                       <SelectContent>
                         {priorities.map((priority) => (
-                          <SelectItem 
-                            key={priority} 
-                            value={priority}
-                            disabled={editingTicket.category === 'Yazıcı Sorunu' && priority !== 'Çok Önemli'}
-                          >
+                          <SelectItem key={priority} value={priority}>
                             {priority}
                           </SelectItem>
                         ))}
@@ -196,65 +179,24 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
               </div>
               
               {role === 'admin' && (
-                <>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="edit-assignee">Atanan Kişi</Label>
-                      <Select
-                        value={editingTicket.assignedTo}
-                        onValueChange={(value) => setEditingTicket({ ...editingTicket, assignedTo: value as AssignedTo })}
-                      >
-                        <SelectTrigger id="edit-assignee">
-                          <SelectValue placeholder="Atanan kişiyi seçin" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {assignees.map((assignee) => (
-                            <SelectItem key={assignee} value={assignee}>
-                              {assignee}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="edit-category">Kategori</Label>
-                      <Select
-                        value={editingTicket.category}
-                        onValueChange={(value) => {
-                          const newCategory = value as Category;
-                          // Yazıcı Sorunu için otomatik öncelik ayarla
-                          if (newCategory === 'Yazıcı Sorunu') {
-                            setEditingTicket({ 
-                              ...editingTicket, 
-                              category: newCategory,
-                              priority: 'Çok Önemli' as Priority
-                            });
-                            
-                            toast({
-                              title: "Otomatik Öncelik",
-                              description: "Yazıcı Sorunu için öncelik 'Çok Önemli' olarak ayarlandı",
-                              duration: 3000
-                            });
-                          } else {
-                            setEditingTicket({ ...editingTicket, category: newCategory });
-                          }
-                        }}
-                      >
-                        <SelectTrigger id="edit-category">
-                          <SelectValue placeholder="Kategori seçin" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem key={category} value={category}>
-                              {category}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-assignee">Atanan Kişi</Label>
+                  <Select
+                    value={editingTicket.assignedTo}
+                    onValueChange={(value) => setEditingTicket({ ...editingTicket, assignedTo: value as AssignedTo })}
+                  >
+                    <SelectTrigger id="edit-assignee">
+                      <SelectValue placeholder="Atanan kişiyi seçin" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {assignees.map((assignee) => (
+                        <SelectItem key={assignee} value={assignee}>
+                          {assignee}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               )}
             </div>
             <DialogFooter>

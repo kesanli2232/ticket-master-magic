@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
@@ -6,6 +7,19 @@ import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Ticket, Department } from '@/types';
 import { ChevronRight, CheckCircle2, Clock, Activity } from 'lucide-react';
+
+// Function to get the current time in Istanbul (GMT+3)
+const getIstanbulTime = () => {
+  const now = new Date();
+  const istanbulOffset = 3 * 60; // GMT+3 in minutes
+  const localOffset = now.getTimezoneOffset();
+  
+  // Calculate total offset in milliseconds (local to Istanbul)
+  const offsetMs = (localOffset + istanbulOffset) * 60 * 1000;
+  
+  // Create a new date object with Istanbul time
+  return new Date(now.getTime() + offsetMs);
+};
 
 const Index = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -35,14 +49,14 @@ const Index = () => {
     createdBySurname: string;
     createdByDepartment: Department;
   }) => {
-    // Yeni bir ticket oluştur
+    // Yeni bir ticket oluştur - Istanbul saatini kullan
     const ticket: Ticket = {
       id: `ticket-${Date.now()}`,
       ...newTicket,
       status: 'Açık',
       priority: 'İkincil',
       assignedTo: 'Emir', // Varsayılan atanan kişi
-      createdAt: new Date().toISOString()
+      createdAt: getIstanbulTime().toISOString()
     };
     
     // Mevcut ticketların başına yeni ticket ekle
