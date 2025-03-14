@@ -11,7 +11,6 @@ export type User = {
 export type Status = 'Açık' | 'Çözüldü';
 export type Priority = 'Çok Önemli' | 'Önemli' | 'İkincil';
 export type AssignedTo = 'Emir' | 'Ahmet' | 'Atakan' | 'Görkem';
-export type Category = 'Belediye' | 'Yazıcı Sorunu' | 'E-Belediye Sorunu' | 'Diğer';
 export type Department = 
   | 'Afet İşleri Müdürlüğü' 
   | 'Bilgi İşlem Müdürlüğü' 
@@ -41,7 +40,6 @@ export type Ticket = {
   status: Status;
   priority: Priority;
   assignedTo: AssignedTo;
-  category: Category;
   createdByName: string;
   createdBySurname: string;
   createdByDepartment: Department;
@@ -52,5 +50,4 @@ export type TicketFilter = {
   status?: Status;
   priority?: Priority;
   assignedTo?: AssignedTo;
-  category?: Category;
 };

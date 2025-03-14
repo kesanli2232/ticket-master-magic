@@ -1,11 +1,10 @@
-
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
 import TicketForm from '@/components/TicketForm';
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
-import { Ticket, Category, Department } from '@/types';
+import { Ticket, Department } from '@/types';
 import { ChevronRight, CheckCircle2, Clock, Activity } from 'lucide-react';
 
 const Index = () => {
@@ -32,7 +31,6 @@ const Index = () => {
   const handleAddTicket = (newTicket: {
     title: string;
     description: string;
-    category: Category;
     createdByName: string;
     createdBySurname: string;
     createdByDepartment: Department;
@@ -42,8 +40,7 @@ const Index = () => {
       id: `ticket-${Date.now()}`,
       ...newTicket,
       status: 'Açık',
-      // 'Yazıcı Sorunu' kategorisi için otomatik olarak 'Çok Önemli' önceliği ata
-      priority: newTicket.category === 'Yazıcı Sorunu' ? 'Çok Önemli' : 'İkincil',
+      priority: 'İkincil',
       assignedTo: 'Emir', // Varsayılan atanan kişi
       createdAt: new Date().toISOString()
     };

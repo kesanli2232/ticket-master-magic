@@ -1,21 +1,20 @@
 
 import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
-import { categories, departments } from '@/lib/data';
+import { departments } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Category, Department } from '@/types';
+import { Department } from '@/types';
 import { Send } from 'lucide-react';
 
 type TicketFormProps = {
   addTicket: (ticket: {
     title: string;
     description: string;
-    category: Category;
     createdByName: string;
     createdBySurname: string;
     createdByDepartment: Department;
@@ -25,7 +24,6 @@ type TicketFormProps = {
 const TicketForm = ({ addTicket }: TicketFormProps) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState<Category>(categories[0]);
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [department, setDepartment] = useState<Department>(departments[0]);
@@ -36,7 +34,7 @@ const TicketForm = ({ addTicket }: TicketFormProps) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (!title || !description || !category || !name || !surname || !department) {
+    if (!title || !description || !name || !surname || !department) {
       toast({
         title: "Doğrulama Hatası",
         description: "Lütfen tüm alanları doldurun",
@@ -51,7 +49,6 @@ const TicketForm = ({ addTicket }: TicketFormProps) => {
       addTicket({
         title,
         description,
-        category,
         createdByName: name,
         createdBySurname: surname,
         createdByDepartment: department
@@ -60,7 +57,6 @@ const TicketForm = ({ addTicket }: TicketFormProps) => {
       // Formu sıfırlama
       setTitle('');
       setDescription('');
-      setCategory(categories[0]);
       setName('');
       setSurname('');
       setDepartment(departments[0]);
@@ -102,25 +98,6 @@ const TicketForm = ({ addTicket }: TicketFormProps) => {
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
             />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="category">Kategori</Label>
-            <Select
-              value={category}
-              onValueChange={(value) => setCategory(value as Category)}
-            >
-              <SelectTrigger id="category">
-                <SelectValue placeholder="Kategori seçin" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((cat) => (
-                  <SelectItem key={cat} value={cat}>
-                    {cat}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
