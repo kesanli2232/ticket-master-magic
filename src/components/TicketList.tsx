@@ -44,6 +44,13 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
       const ticket = tickets.find(t => t.id === id);
       if (!ticket) return;
       
+      // Eğer durum "Çözülemedi" olarak değiştiriliyorsa, yorum alanı açılmalı
+      if (status === 'Çözülemedi') {
+        handleEditTicket({...ticket, status: 'Çözülemedi'});
+        setIsUpdating(false);
+        return;
+      }
+      
       // Create updated ticket
       const updatedTicket = { ...ticket, status };
       
@@ -61,11 +68,6 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
         description: `Talep durumu ${status} olarak değiştirildi`,
         duration: 3000
       });
-
-      // Eğer "Çözülemedi" olarak işaretlendiyse ve viewer ise, düzenleme ekranını aç
-      if (role === 'viewer' && status === 'Çözülemedi') {
-        handleEditTicket(updatedTicket);
-      }
     } catch (error) {
       console.error('Error updating ticket status:', error);
       toast({
@@ -110,7 +112,7 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
   
   const handleEditTicket = (ticket: Ticket) => {
     setEditingTicket(ticket);
-    // Eğer "Çözülemedi" durumunda ise yorum alanını göster
+    // Eğer "Çözülemedi" durumunda ise veya durumu "Çözülemedi" olarak değiştiriliyorsa yorum alanını göster
     setShowRejectionCommentField(ticket.status === 'Çözülemedi');
     // Varsa mevcut yorum değerini al
     setRejectionComment(ticket.rejectionComment || '');
@@ -210,12 +212,12 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>
-                {role === 'viewer' && editingTicket.status === 'Çözülemedi' 
+                {editingTicket.status === 'Çözülemedi' && role === 'viewer'
                   ? "Çözülememe Nedeni Ekle" 
                   : "Talebi Düzenle"}
               </DialogTitle>
               <DialogDescription>
-                {role === 'viewer' && editingTicket.status === 'Çözülemedi'
+                {editingTicket.status === 'Çözülemedi' && role === 'viewer'
                   ? "Lütfen talebin neden çözülemediğini açıklayın"
                   : "Aşağıdan talep bilgilerini düzenleyebilirsiniz"}
               </DialogDescription>
@@ -237,26 +239,30 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
                   />
                 </div>
               ) : (
-                // Admin ise tüm alanları göster
+                // Admin ise veya Viewer ve Çözülemedi değilse, gerekli alanları göster
                 <>
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-title">Başlık</Label>
-                    <Input
-                      id="edit-title"
-                      value={editingTicket.title}
-                      onChange={(e) => setEditingTicket({ ...editingTicket, title: e.target.value })}
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-description">Açıklama</Label>
-                    <Textarea
-                      id="edit-description"
-                      value={editingTicket.description}
-                      onChange={(e) => setEditingTicket({ ...editingTicket, description: e.target.value })}
-                      rows={3}
-                    />
-                  </div>
+                  {role === 'admin' && (
+                    <>
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-title">Başlık</Label>
+                        <Input
+                          id="edit-title"
+                          value={editingTicket.title}
+                          onChange={(e) => setEditingTicket({ ...editingTicket, title: e.target.value })}
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-description">Açıklama</Label>
+                        <Textarea
+                          id="edit-description"
+                          value={editingTicket.description}
+                          onChange={(e) => setEditingTicket({ ...editingTicket, description: e.target.value })}
+                          rows={3}
+                        />
+                      </div>
+                    </>
+                  )}
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -351,7 +357,7 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
                   (!rejectionComment || rejectionComment.trim() === '')
                 }
               >
-                {role === 'viewer' && editingTicket.status === 'Çözülemedi' 
+                {editingTicket.status === 'Çözülemedi' && role === 'viewer'
                   ? "Yorumu Kaydet" 
                   : "Değişiklikleri Kaydet"}
               </Button>

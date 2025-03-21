@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
@@ -21,13 +20,6 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   
   const toggleStatus = () => {
-    // Viewer rolü için sadece "Çözülemedi" durumuna geçişe izin ver
-    if (role === 'viewer') {
-      onUpdateStatus(ticket.id, 'Çözülemedi');
-      return;
-    }
-    
-    // Admin rolü için mevcut döngüsel durum değişimini koru
     let newStatus: Status;
     switch (ticket.status) {
       case 'Açık':
@@ -37,6 +29,9 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
         newStatus = 'Çözüldü';
         break;
       case 'Çözüldü':
+        newStatus = 'Açık';
+        break;
+      case 'Çözülemedi':
         newStatus = 'Açık';
         break;
       default:
@@ -158,7 +153,6 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
             </>
           )}
           
-          {/* Viewer rolü için düzenleme butonu, sadece "Çözülemedi" durumunda yorum eklemek için */}
           {role === 'viewer' && ticket.status === 'Çözülemedi' && (
             <Button 
               variant="ghost" 
@@ -201,7 +195,6 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
         </div>
       </div>
 
-      {/* IP adresi ve oluşturulma saati bilgileri */}
       {role === 'admin' && (
         <div className="border-t border-border pt-2 mt-2 mb-3">
           <div className="flex flex-col space-y-1">
@@ -219,7 +212,6 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
         </div>
       )}
 
-      {/* Çözülemedi durumunda yorum gösterimi */}
       {ticket.status === 'Çözülemedi' && ticket.rejectionComment && (
         <div className="border-t border-border pt-2 mt-2 mb-3">
           <div className="flex flex-col space-y-1">
@@ -251,8 +243,8 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
                     ? 'border-green-500 text-green-500 hover:bg-green-50'
                     : 'border-red-500 text-red-500 hover:bg-red-50'
             }
-            onClick={role === 'admin' || (role === 'viewer' && ticket.status !== 'Çözülemedi') ? toggleStatus : undefined}
-            disabled={role === 'viewer' && ticket.status === 'Çözülemedi'}
+            onClick={toggleStatus}
+            disabled={ticket.status === 'Çözülemedi'}
           >
             {ticket.status}
           </Button>
