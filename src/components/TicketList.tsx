@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { assignees, priorities, statuses } from '@/lib/data';
 import { useAuth } from '@/context/AuthContext';
+import { DB } from '@/lib/data';
 
 type TicketListProps = {
   tickets: Ticket[];
@@ -22,6 +23,7 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
   const [filters, setFilters] = useState<TicketFilter>({});
   const [editingTicket, setEditingTicket] = useState<Ticket | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const { role } = useAuth();
   const { toast } = useToast();
   
@@ -32,28 +34,71 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
     return true;
   });
   
-  const handleUpdateStatus = (id: string, status: Status) => {
-    const updatedTickets = tickets.map((ticket) => 
-      ticket.id === id ? { ...ticket, status } : ticket
-    );
-    setTickets(updatedTickets);
+  const handleUpdateStatus = async (id: string, status: Status) => {
+    setIsUpdating(true);
     
-    toast({
-      title: "Durum Güncellendi",
-      description: `Talep durumu ${status} olarak değiştirildi`,
-      duration: 3000
-    });
+    try {
+      // Find the ticket to update
+      const ticket = tickets.find(t => t.id === id);
+      if (!ticket) return;
+      
+      // Create updated ticket
+      const updatedTicket = { ...ticket, status };
+      
+      // Update in Supabase
+      await DB.updateTicket(updatedTicket);
+      
+      // Update local state
+      const updatedTickets = tickets.map(t => 
+        t.id === id ? updatedTicket : t
+      );
+      setTickets(updatedTickets);
+      
+      toast({
+        title: "Durum Güncellendi",
+        description: `Talep durumu ${status} olarak değiştirildi`,
+        duration: 3000
+      });
+    } catch (error) {
+      console.error('Error updating ticket status:', error);
+      toast({
+        title: "Güncelleme Hatası",
+        description: "Talep durumu güncellenirken bir hata oluştu",
+        variant: "destructive",
+        duration: 3000
+      });
+    } finally {
+      setIsUpdating(false);
+    }
   };
   
-  const handleDeleteTicket = (id: string) => {
-    const updatedTickets = tickets.filter((ticket) => ticket.id !== id);
-    setTickets(updatedTickets);
+  const handleDeleteTicket = async (id: string) => {
+    setIsUpdating(true);
     
-    toast({
-      title: "Talep Silindi",
-      description: "Talep başarıyla silindi",
-      duration: 3000
-    });
+    try {
+      // Delete from Supabase
+      await DB.deleteTicket(id);
+      
+      // Update local state
+      const updatedTickets = tickets.filter(ticket => ticket.id !== id);
+      setTickets(updatedTickets);
+      
+      toast({
+        title: "Talep Silindi",
+        description: "Talep başarıyla silindi",
+        duration: 3000
+      });
+    } catch (error) {
+      console.error('Error deleting ticket:', error);
+      toast({
+        title: "Silme Hatası",
+        description: "Talep silinirken bir hata oluştu",
+        variant: "destructive",
+        duration: 3000
+      });
+    } finally {
+      setIsUpdating(false);
+    }
   };
   
   const handleEditTicket = (ticket: Ticket) => {
@@ -61,22 +106,39 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
     setIsEditDialogOpen(true);
   };
   
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (!editingTicket) return;
+    setIsUpdating(true);
     
-    const updatedTickets = tickets.map((ticket) => 
-      ticket.id === editingTicket.id ? editingTicket : ticket
-    );
-    
-    setTickets(updatedTickets);
-    setIsEditDialogOpen(false);
-    setEditingTicket(null);
-    
-    toast({
-      title: "Talep Güncellendi",
-      description: "Talep başarıyla güncellendi",
-      duration: 3000
-    });
+    try {
+      // Update in Supabase
+      await DB.updateTicket(editingTicket);
+      
+      // Update local state
+      const updatedTickets = tickets.map(ticket => 
+        ticket.id === editingTicket.id ? editingTicket : ticket
+      );
+      
+      setTickets(updatedTickets);
+      setIsEditDialogOpen(false);
+      setEditingTicket(null);
+      
+      toast({
+        title: "Talep Güncellendi",
+        description: "Talep başarıyla güncellendi",
+        duration: 3000
+      });
+    } catch (error) {
+      console.error('Error updating ticket:', error);
+      toast({
+        title: "Güncelleme Hatası",
+        description: "Talep güncellenirken bir hata oluştu",
+        variant: "destructive",
+        duration: 3000
+      });
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   return (

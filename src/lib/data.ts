@@ -1,5 +1,6 @@
 
 import { User, Ticket, Department, Status, Priority, AssignedTo } from '@/types';
+import { supabase } from '@/integrations/supabase/client';
 
 export const users: User[] = [
   {
@@ -76,66 +77,145 @@ export const getUserIpAddress = async (): Promise<string> => {
 
 // Database functions for tickets
 export const DB = {
-  // Save tickets to localStorage
-  saveTickets: (tickets: Ticket[]): void => {
+  // Save tickets to Supabase
+  saveTickets: async (tickets: Ticket[]): Promise<void> => {
     try {
-      localStorage.setItem('tickets', JSON.stringify(tickets));
-      console.log('Tickets saved successfully:', tickets.length);
+      // This function is kept for compatibility but not used directly
+      console.log('saveTickets method is deprecated, use individual CRUD operations instead');
     } catch (error) {
-      console.error('Error saving tickets to localStorage:', error);
+      console.error('Error saving tickets to Supabase:', error);
     }
   },
 
-  // Get all tickets from localStorage
-  getTickets: (): Ticket[] => {
+  // Get all tickets from Supabase
+  getTickets: async (): Promise<Ticket[]> => {
     try {
-      const savedTickets = localStorage.getItem('tickets');
-      if (!savedTickets) return [];
+      const { data, error } = await supabase
+        .from('tickets')
+        .select('*')
+        .order('created_at', { ascending: false });
       
-      const tickets = JSON.parse(savedTickets) as Ticket[];
+      if (error) {
+        console.error('Error fetching tickets from Supabase:', error);
+        return [];
+      }
+      
+      // Format the data to match our Ticket type
+      const tickets = data.map(ticket => ({
+        id: ticket.id,
+        title: ticket.title,
+        description: ticket.description,
+        status: ticket.status as Status,
+        priority: ticket.priority as Priority,
+        assignedTo: ticket.assigned_to as AssignedTo,
+        createdByName: ticket.created_by_name,
+        createdBySurname: ticket.created_by_surname,
+        createdByDepartment: ticket.created_by_department as Department,
+        createdAt: ticket.created_at,
+        ipAddress: ticket.ip_address
+      }));
+      
       return tickets;
     } catch (error) {
-      console.error('Error retrieving tickets from localStorage:', error);
+      console.error('Error retrieving tickets from Supabase:', error);
       return [];
     }
   },
 
-  // Add a new ticket
-  addTicket: (ticket: Ticket): void => {
-    const tickets = DB.getTickets();
-    DB.saveTickets([ticket, ...tickets]);
+  // Add a new ticket to Supabase
+  addTicket: async (ticket: Ticket): Promise<void> => {
+    try {
+      const { error } = await supabase
+        .from('tickets')
+        .insert({
+          id: ticket.id,
+          title: ticket.title,
+          description: ticket.description,
+          status: ticket.status,
+          priority: ticket.priority,
+          assigned_to: ticket.assignedTo,
+          created_by_name: ticket.createdByName,
+          created_by_surname: ticket.createdBySurname,
+          created_by_department: ticket.createdByDepartment,
+          created_at: ticket.createdAt,
+          ip_address: ticket.ipAddress
+        });
+      
+      if (error) {
+        console.error('Error adding ticket to Supabase:', error);
+      } else {
+        console.log('Ticket added successfully');
+      }
+    } catch (error) {
+      console.error('Error adding ticket to Supabase:', error);
+    }
   },
 
-  // Update a ticket
-  updateTicket: (updatedTicket: Ticket): void => {
-    const tickets = DB.getTickets();
-    const updatedTickets = tickets.map(ticket => 
-      ticket.id === updatedTicket.id ? updatedTicket : ticket
-    );
-    DB.saveTickets(updatedTickets);
+  // Update a ticket in Supabase
+  updateTicket: async (updatedTicket: Ticket): Promise<void> => {
+    try {
+      const { error } = await supabase
+        .from('tickets')
+        .update({
+          title: updatedTicket.title,
+          description: updatedTicket.description,
+          status: updatedTicket.status,
+          priority: updatedTicket.priority,
+          assigned_to: updatedTicket.assignedTo,
+          created_by_name: updatedTicket.createdByName,
+          created_by_surname: updatedTicket.createdBySurname,
+          created_by_department: updatedTicket.createdByDepartment,
+          ip_address: updatedTicket.ipAddress
+        })
+        .eq('id', updatedTicket.id);
+      
+      if (error) {
+        console.error('Error updating ticket in Supabase:', error);
+      } else {
+        console.log('Ticket updated successfully');
+      }
+    } catch (error) {
+      console.error('Error updating ticket in Supabase:', error);
+    }
   },
 
-  // Delete a ticket
-  deleteTicket: (id: string): void => {
-    const tickets = DB.getTickets();
-    const filteredTickets = tickets.filter(ticket => ticket.id !== id);
-    DB.saveTickets(filteredTickets);
+  // Delete a ticket from Supabase
+  deleteTicket: async (id: string): Promise<void> => {
+    try {
+      const { error } = await supabase
+        .from('tickets')
+        .delete()
+        .eq('id', id);
+      
+      if (error) {
+        console.error('Error deleting ticket from Supabase:', error);
+      } else {
+        console.log('Ticket deleted successfully');
+      }
+    } catch (error) {
+      console.error('Error deleting ticket from Supabase:', error);
+    }
   },
 
   // Remove tickets older than 7 days
-  cleanupOldTickets: (): void => {
-    const tickets = DB.getTickets();
-    const now = getIstanbulTime();
-    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    
-    const filteredTickets = tickets.filter(ticket => {
-      const ticketDate = new Date(ticket.createdAt);
-      return ticketDate >= sevenDaysAgo;
-    });
-    
-    if (tickets.length !== filteredTickets.length) {
-      console.log(`Removed ${tickets.length - filteredTickets.length} tickets older than 7 days`);
-      DB.saveTickets(filteredTickets);
+  cleanupOldTickets: async (): Promise<void> => {
+    try {
+      const now = getIstanbulTime();
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      
+      const { error, count } = await supabase
+        .from('tickets')
+        .delete()
+        .lt('created_at', sevenDaysAgo)
+        .select('count');
+      
+      if (error) {
+        console.error('Error removing old tickets from Supabase:', error);
+      } else if (count) {
+        console.log(`Removed ${count} tickets older than 7 days`);
+      }
+    } catch (error) {
+      console.error('Error cleaning up old tickets:', error);
     }
   }
 };

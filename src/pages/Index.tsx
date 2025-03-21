@@ -11,18 +11,36 @@ import { getIstanbulTime, DB, getUserIpAddress } from '@/lib/data';
 
 const Index = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   
-  // Load tickets from database
+  // Load tickets from Supabase
   useEffect(() => {
-    // Clean up tickets older than 7 days
-    DB.cleanupOldTickets();
+    const loadTickets = async () => {
+      setIsLoading(true);
+      try {
+        // Clean up tickets older than 7 days
+        await DB.cleanupOldTickets();
+        
+        // Get tickets from Supabase
+        const tickets = await DB.getTickets();
+        setTickets(tickets);
+        console.log('Index: Tickets loaded:', tickets.length);
+      } catch (error) {
+        console.error('Error loading tickets:', error);
+        toast({
+          title: "Veri Yükleme Hatası",
+          description: "Talepler yüklenirken bir hata oluştu",
+          variant: "destructive",
+          duration: 5000
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
     
-    // Get tickets from database
-    const tickets = DB.getTickets();
-    setTickets(tickets);
-    console.log('Index: Tickets loaded:', tickets.length);
-  }, []);
+    loadTickets();
+  }, [toast]);
   
   const handleAddTicket = async (newTicket: {
     title: string;
@@ -31,31 +49,46 @@ const Index = () => {
     createdBySurname: string;
     createdByDepartment: Department;
   }) => {
-    // IP adresini al
-    const ipAddress = await getUserIpAddress();
+    setIsLoading(true);
     
-    // Create a new ticket - use Istanbul time
-    const ticket: Ticket = {
-      id: `ticket-${Date.now()}`,
-      ...newTicket,
-      status: 'Açık',
-      priority: 'İkincil',
-      assignedTo: 'Emir', // Default assignee
-      createdAt: getIstanbulTime().toISOString(),
-      ipAddress // IP adresini ekliyoruz
-    };
-    
-    // Add to database
-    DB.addTicket(ticket);
-    
-    // Update local state - get fresh tickets from database
-    setTickets(DB.getTickets());
-    
-    toast({
-      title: "Talep Oluşturuldu",
-      description: "Talebiniz başarıyla gönderildi!",
-      duration: 5000
-    });
+    try {
+      // IP adresini al
+      const ipAddress = await getUserIpAddress();
+      
+      // Create a new ticket - use Istanbul time
+      const ticket: Ticket = {
+        id: `ticket-${Date.now()}`,
+        ...newTicket,
+        status: 'Açık',
+        priority: 'İkincil',
+        assignedTo: 'Emir', // Default assignee
+        createdAt: getIstanbulTime().toISOString(),
+        ipAddress // IP adresini ekliyoruz
+      };
+      
+      // Add to Supabase
+      await DB.addTicket(ticket);
+      
+      // Update local state - get fresh tickets from Supabase
+      const updatedTickets = await DB.getTickets();
+      setTickets(updatedTickets);
+      
+      toast({
+        title: "Talep Oluşturuldu",
+        description: "Talebiniz başarıyla gönderildi!",
+        duration: 5000
+      });
+    } catch (error) {
+      console.error('Error adding ticket:', error);
+      toast({
+        title: "Talep Oluşturma Hatası",
+        description: "Talebiniz gönderilirken bir hata oluştu",
+        variant: "destructive",
+        duration: 5000
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
