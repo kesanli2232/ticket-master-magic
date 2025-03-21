@@ -21,7 +21,13 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   
   const toggleStatus = () => {
-    // Durumu döngüsel olarak değiştirme
+    // Viewer rolü için sadece "Çözülemedi" durumuna geçişe izin ver
+    if (role === 'viewer') {
+      onUpdateStatus(ticket.id, 'Çözülemedi');
+      return;
+    }
+    
+    // Admin rolü için mevcut döngüsel durum değişimini koru
     let newStatus: Status;
     switch (ticket.status) {
       case 'Açık':
@@ -151,6 +157,19 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
               </Dialog>
             </>
           )}
+          
+          {/* Viewer rolü için düzenleme butonu, sadece "Çözülemedi" durumunda yorum eklemek için */}
+          {role === 'viewer' && ticket.status === 'Çözülemedi' && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-8 w-8 p-0" 
+              onClick={() => onEdit(ticket)}
+            >
+              <Pencil className="h-4 w-4" />
+              <span className="sr-only">Yorum Ekle</span>
+            </Button>
+          )}
         </div>
       </div>
       
@@ -232,8 +251,8 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
                     ? 'border-green-500 text-green-500 hover:bg-green-50'
                     : 'border-red-500 text-red-500 hover:bg-red-50'
             }
-            onClick={ticket.status !== 'Çözülemedi' ? toggleStatus : undefined}
-            disabled={ticket.status === 'Çözülemedi'}
+            onClick={role === 'admin' || (role === 'viewer' && ticket.status !== 'Çözülemedi') ? toggleStatus : undefined}
+            disabled={role === 'viewer' && ticket.status === 'Çözülemedi'}
           >
             {ticket.status}
           </Button>

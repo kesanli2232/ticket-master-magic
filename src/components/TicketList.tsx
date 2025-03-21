@@ -61,6 +61,11 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
         description: `Talep durumu ${status} olarak değiştirildi`,
         duration: 3000
       });
+
+      // Eğer "Çözülemedi" olarak işaretlendiyse ve viewer ise, düzenleme ekranını aç
+      if (role === 'viewer' && status === 'Çözülemedi') {
+        handleEditTicket(updatedTicket);
+      }
     } catch (error) {
       console.error('Error updating ticket status:', error);
       toast({
@@ -204,96 +209,20 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Talebi Düzenle</DialogTitle>
+              <DialogTitle>
+                {role === 'viewer' && editingTicket.status === 'Çözülemedi' 
+                  ? "Çözülememe Nedeni Ekle" 
+                  : "Talebi Düzenle"}
+              </DialogTitle>
               <DialogDescription>
-                Aşağıdan talep bilgilerini düzenleyebilirsiniz
+                {role === 'viewer' && editingTicket.status === 'Çözülemedi'
+                  ? "Lütfen talebin neden çözülemediğini açıklayın"
+                  : "Aşağıdan talep bilgilerini düzenleyebilirsiniz"}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="edit-title">Başlık</Label>
-                <Input
-                  id="edit-title"
-                  value={editingTicket.title}
-                  onChange={(e) => setEditingTicket({ ...editingTicket, title: e.target.value })}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="edit-description">Açıklama</Label>
-                <Textarea
-                  id="edit-description"
-                  value={editingTicket.description}
-                  onChange={(e) => setEditingTicket({ ...editingTicket, description: e.target.value })}
-                  rows={3}
-                />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="edit-status">Durum</Label>
-                  <Select
-                    value={editingTicket.status}
-                    onValueChange={(value) => handleStatusChange(value as Status)}
-                  >
-                    <SelectTrigger id="edit-status">
-                      <SelectValue placeholder="Durum seçin" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {statuses.map((status) => (
-                        <SelectItem key={status} value={status}>
-                          {status}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                {role === 'admin' && (
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-priority">Öncelik</Label>
-                    <Select
-                      value={editingTicket.priority}
-                      onValueChange={(value) => setEditingTicket({ ...editingTicket, priority: value as Priority })}
-                    >
-                      <SelectTrigger id="edit-priority">
-                        <SelectValue placeholder="Öncelik seçin" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {priorities.map((priority) => (
-                          <SelectItem key={priority} value={priority}>
-                            {priority}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-              </div>
-              
-              {role === 'admin' && (
-                <div className="space-y-2">
-                  <Label htmlFor="edit-assignee">Atanan Kişi</Label>
-                  <Select
-                    value={editingTicket.assignedTo}
-                    onValueChange={(value) => setEditingTicket({ ...editingTicket, assignedTo: value as AssignedTo })}
-                  >
-                    <SelectTrigger id="edit-assignee">
-                      <SelectValue placeholder="Atanan kişiyi seçin" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {assignees.map((assignee) => (
-                        <SelectItem key={assignee} value={assignee}>
-                          {assignee}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-
-              {/* Çözülemedi durumu için yorum alanı */}
-              {showRejectionCommentField && (
+              {/* Viewer ise ve Çözülemedi durumunda ise sadece yorum alanını göster */}
+              {role === 'viewer' && editingTicket.status === 'Çözülemedi' ? (
                 <div className="space-y-2">
                   <Label htmlFor="rejection-comment" className="text-red-500">
                     Çözülememe Nedeni (Zorunlu)
@@ -307,6 +236,108 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
                     className="border-red-200 focus-visible:ring-red-400"
                   />
                 </div>
+              ) : (
+                // Admin ise tüm alanları göster
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-title">Başlık</Label>
+                    <Input
+                      id="edit-title"
+                      value={editingTicket.title}
+                      onChange={(e) => setEditingTicket({ ...editingTicket, title: e.target.value })}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-description">Açıklama</Label>
+                    <Textarea
+                      id="edit-description"
+                      value={editingTicket.description}
+                      onChange={(e) => setEditingTicket({ ...editingTicket, description: e.target.value })}
+                      rows={3}
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="edit-status">Durum</Label>
+                      <Select
+                        value={editingTicket.status}
+                        onValueChange={(value) => handleStatusChange(value as Status)}
+                      >
+                        <SelectTrigger id="edit-status">
+                          <SelectValue placeholder="Durum seçin" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {statuses.map((status) => (
+                            <SelectItem key={status} value={status}>
+                              {status}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    {role === 'admin' && (
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-priority">Öncelik</Label>
+                        <Select
+                          value={editingTicket.priority}
+                          onValueChange={(value) => setEditingTicket({ ...editingTicket, priority: value as Priority })}
+                        >
+                          <SelectTrigger id="edit-priority">
+                            <SelectValue placeholder="Öncelik seçin" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {priorities.map((priority) => (
+                              <SelectItem key={priority} value={priority}>
+                                {priority}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {role === 'admin' && (
+                    <div className="space-y-2">
+                      <Label htmlFor="edit-assignee">Atanan Kişi</Label>
+                      <Select
+                        value={editingTicket.assignedTo}
+                        onValueChange={(value) => setEditingTicket({ ...editingTicket, assignedTo: value as AssignedTo })}
+                      >
+                        <SelectTrigger id="edit-assignee">
+                          <SelectValue placeholder="Atanan kişiyi seçin" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {assignees.map((assignee) => (
+                            <SelectItem key={assignee} value={assignee}>
+                              {assignee}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
+                  {/* Çözülemedi durumu için yorum alanı */}
+                  {showRejectionCommentField && (
+                    <div className="space-y-2">
+                      <Label htmlFor="rejection-comment" className="text-red-500">
+                        Çözülememe Nedeni (Zorunlu)
+                      </Label>
+                      <Textarea
+                        id="rejection-comment"
+                        value={rejectionComment}
+                        onChange={(e) => setRejectionComment(e.target.value)}
+                        rows={3}
+                        placeholder="Bu talebin neden çözülemediğini açıklayın"
+                        className="border-red-200 focus-visible:ring-red-400"
+                      />
+                    </div>
+                  )}
+                </>
               )}
             </div>
             <DialogFooter>
@@ -320,7 +351,9 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
                   (!rejectionComment || rejectionComment.trim() === '')
                 }
               >
-                Değişiklikleri Kaydet
+                {role === 'viewer' && editingTicket.status === 'Çözülemedi' 
+                  ? "Yorumu Kaydet" 
+                  : "Değişiklikleri Kaydet"}
               </Button>
             </DialogFooter>
           </DialogContent>
