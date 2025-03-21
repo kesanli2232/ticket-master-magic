@@ -62,6 +62,18 @@ export const getIstanbulTime = () => {
   return new Date(now.getTime() + offsetMs);
 };
 
+// Kullanıcının IP adresini almak için fonksiyon
+export const getUserIpAddress = async (): Promise<string> => {
+  try {
+    const response = await fetch('https://api.ipify.org?format=json');
+    const data = await response.json();
+    return data.ip;
+  } catch (error) {
+    console.error('IP adresi alınamadı:', error);
+    return 'Bilinmiyor';
+  }
+};
+
 // Database functions for tickets
 export const DB = {
   // Save tickets to localStorage

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
@@ -6,7 +7,7 @@ import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
 import { Ticket, Department } from '@/types';
 import { ChevronRight, CheckCircle2, Clock, Activity } from 'lucide-react';
-import { getIstanbulTime, DB } from '@/lib/data';
+import { getIstanbulTime, DB, getUserIpAddress } from '@/lib/data';
 
 const Index = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -23,13 +24,16 @@ const Index = () => {
     console.log('Index: Tickets loaded:', tickets.length);
   }, []);
   
-  const handleAddTicket = (newTicket: {
+  const handleAddTicket = async (newTicket: {
     title: string;
     description: string;
     createdByName: string;
     createdBySurname: string;
     createdByDepartment: Department;
   }) => {
+    // IP adresini al
+    const ipAddress = await getUserIpAddress();
+    
     // Create a new ticket - use Istanbul time
     const ticket: Ticket = {
       id: `ticket-${Date.now()}`,
@@ -37,7 +41,8 @@ const Index = () => {
       status: 'Açık',
       priority: 'İkincil',
       assignedTo: 'Emir', // Default assignee
-      createdAt: getIstanbulTime().toISOString()
+      createdAt: getIstanbulTime().toISOString(),
+      ipAddress // IP adresini ekliyoruz
     };
     
     // Add to database

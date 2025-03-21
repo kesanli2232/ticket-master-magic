@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
-import { Pencil, Trash2, AlertTriangle, CheckCircle, AlertCircle, Calendar, User, Briefcase, Clock } from 'lucide-react';
+import { Pencil, Trash2, AlertTriangle, CheckCircle, AlertCircle, Calendar, User, Briefcase, Clock, Network } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
@@ -145,6 +145,24 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
           </span>
         </div>
       </div>
+
+      {/* IP adresi ve oluşturulma saati bilgileri */}
+      {role === 'admin' && (
+        <div className="border-t border-border pt-2 mt-2 mb-3">
+          <div className="flex flex-col space-y-1">
+            <div className="flex items-center text-xs text-muted-foreground">
+              <Network className="h-3.5 w-3.5 mr-1" />
+              <span title="IP Adresi">IP: {ticket.ipAddress || 'Bilinmiyor'}</span>
+            </div>
+            <div className="flex items-center text-xs text-muted-foreground">
+              <Clock className="h-3.5 w-3.5 mr-1" />
+              <span title="Tam Oluşturulma Zamanı">
+                Saat: {format(new Date(ticket.createdAt), 'HH:mm:ss', { locale: tr })}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
       
       <div className="flex flex-wrap items-center gap-2 mt-auto">
         <Badge 

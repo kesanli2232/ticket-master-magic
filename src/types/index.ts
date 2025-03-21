@@ -44,6 +44,7 @@ export type Ticket = {
   createdBySurname: string;
   createdByDepartment: Department;
   createdAt: string;
+  ipAddress?: string; // IP adresi bilgisini ekledik (opsiyonel)
 };
 
 export type TicketFilter = {
