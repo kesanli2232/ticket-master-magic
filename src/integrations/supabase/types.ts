@@ -20,6 +20,7 @@ export type Database = {
           id: string
           ip_address: string | null
           priority: string
+          rejection_comment: string | null
           status: string
           title: string
         }
@@ -33,6 +34,7 @@ export type Database = {
           id: string
           ip_address?: string | null
           priority: string
+          rejection_comment?: string | null
           status: string
           title: string
         }
@@ -46,6 +48,7 @@ export type Database = {
           id?: string
           ip_address?: string | null
           priority?: string
+          rejection_comment?: string | null
           status?: string
           title?: string
         }

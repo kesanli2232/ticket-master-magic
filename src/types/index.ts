@@ -8,7 +8,7 @@ export type User = {
   role: Role;
 };
 
-export type Status = 'Açık' | 'Çözüldü';
+export type Status = 'Açık' | 'İşlemde' | 'Çözüldü' | 'Çözülemedi';
 export type Priority = 'Çok Önemli' | 'Önemli' | 'İkincil';
 export type AssignedTo = 'Emir' | 'Ahmet' | 'Atakan' | 'Görkem';
 export type Department = 
@@ -44,7 +44,8 @@ export type Ticket = {
   createdBySurname: string;
   createdByDepartment: Department;
   createdAt: string;
-  ipAddress?: string; // IP adresi bilgisini ekledik (opsiyonel)
+  ipAddress?: string;
+  rejectionComment?: string; // Bu alan "Çözülemedi" durumu için yorum alanı
 };
 
 export type TicketFilter = {

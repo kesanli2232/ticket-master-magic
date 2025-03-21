@@ -24,6 +24,8 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
   const [editingTicket, setEditingTicket] = useState<Ticket | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [rejectionComment, setRejectionComment] = useState<string>("");
+  const [showRejectionCommentField, setShowRejectionCommentField] = useState(false);
   const { role } = useAuth();
   const { toast } = useToast();
   
@@ -103,7 +105,28 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
   
   const handleEditTicket = (ticket: Ticket) => {
     setEditingTicket(ticket);
+    // Eğer "Çözülemedi" durumunda ise yorum alanını göster
+    setShowRejectionCommentField(ticket.status === 'Çözülemedi');
+    // Varsa mevcut yorum değerini al
+    setRejectionComment(ticket.rejectionComment || '');
     setIsEditDialogOpen(true);
+  };
+
+  const handleStatusChange = (value: Status) => {
+    if (!editingTicket) return;
+    
+    setEditingTicket({ ...editingTicket, status: value });
+    
+    // "Çözülemedi" durumu seçildiğinde yorum alanını göster
+    if (value === 'Çözülemedi') {
+      setShowRejectionCommentField(true);
+    } else {
+      setShowRejectionCommentField(false);
+      // Eğer "Çözülemedi" durumundan başka bir duruma geçilirse, yorumu sıfırla
+      if (editingTicket.status === 'Çözülemedi') {
+        setRejectionComment('');
+      }
+    }
   };
   
   const handleSaveEdit = async () => {
@@ -111,17 +134,25 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
     setIsUpdating(true);
     
     try {
+      // Yeni ticket nesnesini oluştur ve "Çözülemedi" durumunda yorum ekle
+      const updatedTicket = {
+        ...editingTicket,
+        rejectionComment: editingTicket.status === 'Çözülemedi' ? rejectionComment : undefined
+      };
+      
       // Update in Supabase
-      await DB.updateTicket(editingTicket);
+      await DB.updateTicket(updatedTicket);
       
       // Update local state
       const updatedTickets = tickets.map(ticket => 
-        ticket.id === editingTicket.id ? editingTicket : ticket
+        ticket.id === updatedTicket.id ? updatedTicket : ticket
       );
       
       setTickets(updatedTickets);
       setIsEditDialogOpen(false);
       setEditingTicket(null);
+      setRejectionComment('');
+      setShowRejectionCommentField(false);
       
       toast({
         title: "Talep Güncellendi",
@@ -203,7 +234,7 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
                   <Label htmlFor="edit-status">Durum</Label>
                   <Select
                     value={editingTicket.status}
-                    onValueChange={(value) => setEditingTicket({ ...editingTicket, status: value as Status })}
+                    onValueChange={(value) => handleStatusChange(value as Status)}
                   >
                     <SelectTrigger id="edit-status">
                       <SelectValue placeholder="Durum seçin" />
@@ -260,12 +291,37 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
                   </Select>
                 </div>
               )}
+
+              {/* Çözülemedi durumu için yorum alanı */}
+              {showRejectionCommentField && (
+                <div className="space-y-2">
+                  <Label htmlFor="rejection-comment" className="text-red-500">
+                    Çözülememe Nedeni (Zorunlu)
+                  </Label>
+                  <Textarea
+                    id="rejection-comment"
+                    value={rejectionComment}
+                    onChange={(e) => setRejectionComment(e.target.value)}
+                    rows={3}
+                    placeholder="Bu talebin neden çözülemediğini açıklayın"
+                    className="border-red-200 focus-visible:ring-red-400"
+                  />
+                </div>
+              )}
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
                 İptal
               </Button>
-              <Button onClick={handleSaveEdit}>Değişiklikleri Kaydet</Button>
+              <Button 
+                onClick={handleSaveEdit}
+                disabled={
+                  editingTicket.status === 'Çözülemedi' && 
+                  (!rejectionComment || rejectionComment.trim() === '')
+                }
+              >
+                Değişiklikleri Kaydet
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

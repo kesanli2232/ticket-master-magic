@@ -21,12 +21,37 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   
   const toggleStatus = () => {
-    const newStatus: Status = ticket.status === 'Açık' ? 'Çözüldü' : 'Açık';
+    // Durumu döngüsel olarak değiştirme
+    let newStatus: Status;
+    switch (ticket.status) {
+      case 'Açık':
+        newStatus = 'İşlemde';
+        break;
+      case 'İşlemde':
+        newStatus = 'Çözüldü';
+        break;
+      case 'Çözüldü':
+        newStatus = 'Açık';
+        break;
+      default:
+        newStatus = 'Açık';
+    }
     onUpdateStatus(ticket.id, newStatus);
   };
   
   const getStatusColor = (status: Status) => {
-    return status === 'Açık' ? 'bg-blue-500' : 'bg-green-500';
+    switch (status) {
+      case 'Açık':
+        return 'bg-blue-500';
+      case 'İşlemde':
+        return 'bg-orange-500';
+      case 'Çözüldü':
+        return 'bg-green-500';
+      case 'Çözülemedi':
+        return 'bg-red-500';
+      default:
+        return 'bg-gray-500';
+    }
   };
   
   const getPriorityIcon = (priority: Priority) => {
@@ -52,7 +77,18 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
   };
   
   const getStatusClass = (status: Status) => {
-    return status === 'Açık' ? 'open' : 'solved';
+    switch (status) {
+      case 'Açık':
+        return 'open';
+      case 'İşlemde':
+        return 'in-progress';
+      case 'Çözüldü':
+        return 'solved';
+      case 'Çözülemedi':
+        return 'unsolved';
+      default:
+        return '';
+    }
   };
   
   const formatDate = (dateString: string) => {
@@ -163,6 +199,16 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
           </div>
         </div>
       )}
+
+      {/* Çözülemedi durumunda yorum gösterimi */}
+      {ticket.status === 'Çözülemedi' && ticket.rejectionComment && (
+        <div className="border-t border-border pt-2 mt-2 mb-3">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium text-red-500">Çözülememe Nedeni:</p>
+            <p className="text-sm text-muted-foreground">{ticket.rejectionComment}</p>
+          </div>
+        </div>
+      )}
       
       <div className="flex flex-wrap items-center gap-2 mt-auto">
         <Badge 
@@ -175,14 +221,19 @@ const TicketCard = ({ ticket, onDelete, onEdit, onUpdateStatus }: TicketCardProp
         
         <div className="ml-auto">
           <Button 
-            variant={ticket.status === 'Açık' ? 'outline' : 'default'} 
+            variant="outline" 
             size="sm"
             className={
               ticket.status === 'Açık' 
                 ? 'border-blue-500 text-blue-500 hover:bg-blue-50' 
-                : 'bg-green-500 hover:bg-green-600'
+                : ticket.status === 'İşlemde'
+                  ? 'border-orange-500 text-orange-500 hover:bg-orange-50'
+                  : ticket.status === 'Çözüldü'
+                    ? 'border-green-500 text-green-500 hover:bg-green-50'
+                    : 'border-red-500 text-red-500 hover:bg-red-50'
             }
-            onClick={toggleStatus}
+            onClick={ticket.status !== 'Çözülemedi' ? toggleStatus : undefined}
+            disabled={ticket.status === 'Çözülemedi'}
           >
             {ticket.status}
           </Button>

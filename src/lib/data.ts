@@ -1,4 +1,3 @@
-
 import { User, Ticket, Department, Status, Priority, AssignedTo } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -40,7 +39,7 @@ export const departments: Department[] = [
   'Zabıta Müdürlüğü'
 ];
 
-export const statuses: Status[] = ['Açık', 'Çözüldü'];
+export const statuses: Status[] = ['Açık', 'İşlemde', 'Çözüldü', 'Çözülemedi'];
 
 export const priorities: Priority[] = [
   'Çok Önemli',
@@ -112,7 +111,8 @@ export const DB = {
         createdBySurname: ticket.created_by_surname,
         createdByDepartment: ticket.created_by_department as Department,
         createdAt: ticket.created_at,
-        ipAddress: ticket.ip_address
+        ipAddress: ticket.ip_address,
+        rejectionComment: ticket.rejection_comment
       }));
       
       return tickets;
@@ -138,7 +138,8 @@ export const DB = {
           created_by_surname: ticket.createdBySurname,
           created_by_department: ticket.createdByDepartment,
           created_at: ticket.createdAt,
-          ip_address: ticket.ipAddress
+          ip_address: ticket.ipAddress,
+          rejection_comment: ticket.rejectionComment
         });
       
       if (error) {
@@ -165,7 +166,8 @@ export const DB = {
           created_by_name: updatedTicket.createdByName,
           created_by_surname: updatedTicket.createdBySurname,
           created_by_department: updatedTicket.createdByDepartment,
-          ip_address: updatedTicket.ipAddress
+          ip_address: updatedTicket.ipAddress,
+          rejection_comment: updatedTicket.rejectionComment
         })
         .eq('id', updatedTicket.id);
       
