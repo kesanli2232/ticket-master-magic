@@ -6,25 +6,47 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/context/AuthContext';
-import { MessageSquare, Lock, User } from 'lucide-react';
+import { MessageSquare, Lock, User, User2 } from 'lucide-react';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+// Form şeması ile zorunlu alanları ve doğrulamaları belirliyoruz
+const loginSchema = z.object({
+  firstName: z.string().min(1, "İsim alanı gereklidir"),
+  lastName: z.string().min(1, "Soyisim alanı gereklidir"),
+  password: z.string().min(1, "Şifre alanı gereklidir"),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
 
 const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Form yönetimi için react-hook-form kullanıyoruz
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = (values: LoginFormValues) => {
     setIsLoading(true);
     
     // Ağ isteğini simüle etmek için küçük bir gecikme ekleyin
     setTimeout(() => {
-      const success = login(username, password);
+      // Kullanıcı adını isim ve soyisimden oluşturalım (küçük harflerle)
+      const username = `${values.firstName.toLowerCase()}_${values.lastName.toLowerCase()}`;
+      const success = login(username, values.password);
       
       if (success) {
-        navigate('/admin');
+        navigate('/');
       }
       
       setIsLoading(false);
@@ -41,52 +63,95 @@ const Login = () => {
             </div>
           </div>
           <CardTitle className="text-2xl">Talep Sistemine Giriş</CardTitle>
-          <CardDescription>Yönetim paneline erişmek için giriş bilgilerinizi girin</CardDescription>
+          <CardDescription>Giriş yapmak için bilgilerinizi girin</CardDescription>
         </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="username">Kullanıcı Adı</Label>
-              <div className="relative">
-                <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="username"
-                  placeholder="Kullanıcı adınızı girin"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="pl-10"
-                  autoComplete="off"
-                />
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <CardContent className="space-y-4">
+              {/* İsim alanı */}
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>İsim</FormLabel>
+                    <div className="relative">
+                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Adınızı girin"
+                          className="pl-10"
+                          autoComplete="given-name"
+                        />
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Soyisim alanı */}
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Soyisim</FormLabel>
+                    <div className="relative">
+                      <User2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Soyadınızı girin"
+                          className="pl-10"
+                          autoComplete="family-name"
+                        />
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              {/* Şifre alanı */}
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Şifre</FormLabel>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="password"
+                          placeholder="Şifrenizi girin"
+                          className="pl-10"
+                        />
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="text-xs text-muted-foreground mt-2">
+                <p>Örnek Giriş Bilgileri:</p>
+                <p>İsim: <code className="text-foreground">Admin</code>, Soyisim: <code className="text-foreground">User</code>, Şifre: <code className="text-foreground">admin123</code></p>
+                <p>İsim: <code className="text-foreground">Viewer</code>, Soyisim: <code className="text-foreground">User</code>, Şifre: <code className="text-foreground">viewer123</code></p>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Deneyin: <code className="text-foreground">admin</code> veya <code className="text-foreground">viewer</code>
-              </p>
-            </div>
+            </CardContent>
             
-            <div className="space-y-2">
-              <Label htmlFor="password">Şifre</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Şifrenizi girin"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Şifre: <code className="text-foreground">admin123</code> veya <code className="text-foreground">viewer123</code>
-              </p>
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Giriş yapılıyor...' : 'Giriş Yap'}
-            </Button>
-          </CardFooter>
-        </form>
+            <CardFooter>
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? 'Giriş yapılıyor...' : 'Giriş Yap'}
+              </Button>
+            </CardFooter>
+          </form>
+        </Form>
       </Card>
     </div>
   );

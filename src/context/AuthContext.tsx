@@ -40,6 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = (username: string, password: string): boolean => {
+    // username artık firstName_lastName formatında gelecek
     const foundUser = findUserByUsername(username);
     
     if (foundUser && foundUser.password === password) {
@@ -52,7 +53,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       toast({
         title: "Giriş başarılı",
-        description: `Hoş geldiniz, ${username}!`,
+        description: `Hoş geldiniz, ${foundUser.displayName || username}!`,
         duration: 3000
       });
       
@@ -61,7 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     
     toast({
       title: "Giriş başarısız",
-      description: "Geçersiz kullanıcı adı veya şifre",
+      description: "Geçersiz kullanıcı bilgileri",
       variant: "destructive",
       duration: 3000
     });
