@@ -43,7 +43,7 @@ const Navbar = () => {
         </Link>
         
         <div className="flex items-center space-x-4">
-          <Link to="/">
+          <Link to="/index">
             <Button variant="ghost" size="sm" className="flex items-center gap-1">
               <Home className="h-4 w-4" />
               <span>Ana Sayfa</span>
