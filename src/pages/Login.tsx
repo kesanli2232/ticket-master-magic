@@ -46,7 +46,8 @@ const Login = () => {
       const success = login(username, values.password);
       
       if (success) {
-        navigate('/');
+        // Giriş başarılı olduysa kullanıcıyı admin sayfasına yönlendir
+        navigate('/admin');
       }
       
       setIsLoading(false);
