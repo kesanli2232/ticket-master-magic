@@ -1,18 +1,21 @@
+
 import { User, Ticket, Department, Status, Priority, AssignedTo } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 
 export const users: User[] = [
   {
     id: '1',
-    username: 'admin',
+    username: 'admin_user',
     password: 'admin123', // Gerçek bir uygulamada hashlenmesi gerekir
-    role: 'admin'
+    role: 'admin',
+    displayName: 'Admin User'
   },
   {
     id: '2',
-    username: 'viewer',
+    username: 'viewer_user',
     password: 'viewer123', // Gerçek bir uygulamada hashlenmesi gerekir
-    role: 'viewer'
+    role: 'viewer',
+    displayName: 'Viewer User'
   }
 ];
 

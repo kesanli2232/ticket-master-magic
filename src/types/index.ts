@@ -6,6 +6,7 @@ export type User = {
   username: string;
   password: string;
   role: Role;
+  displayName?: string; // Adding optional displayName property
 };
 
 export type Status = 'Açık' | 'İşlemde' | 'Çözüldü' | 'Çözülemedi';
