@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/context/AuthContext';
-import { MessageSquare, Lock, User, User2 } from 'lucide-react';
+import { MessageSquare, Lock, Mail } from 'lucide-react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -14,8 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 // Form şeması ile zorunlu alanları ve doğrulamaları belirliyoruz
 const loginSchema = z.object({
-  firstName: z.string().min(1, "İsim alanı gereklidir"),
-  lastName: z.string().min(1, "Soyisim alanı gereklidir"),
+  username: z.string().min(1, "Kullanıcı adı gereklidir"),
   password: z.string().min(1, "Şifre alanı gereklidir"),
 });
 
@@ -30,8 +29,7 @@ const Login = () => {
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      username: "",
       password: "",
     },
   });
@@ -41,9 +39,7 @@ const Login = () => {
     
     // Ağ isteğini simüle etmek için küçük bir gecikme ekleyin
     setTimeout(() => {
-      // Kullanıcı adını isim ve soyisimden oluşturalım (küçük harflerle)
-      const username = `${values.firstName.toLowerCase()}_${values.lastName.toLowerCase()}`;
-      const success = login(username, values.password);
+      const success = login(values.username, values.password);
       
       if (success) {
         // Giriş başarılı olduysa kullanıcıyı admin sayfasına yönlendir
@@ -70,44 +66,21 @@ const Login = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardContent className="space-y-4">
-              {/* İsim alanı */}
+              {/* Kullanıcı adı alanı */}
               <FormField
                 control={form.control}
-                name="firstName"
+                name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>İsim</FormLabel>
+                    <FormLabel>Kullanıcı Adı</FormLabel>
                     <div className="relative">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <FormControl>
                         <Input
                           {...field}
-                          placeholder="Adınızı girin"
+                          placeholder="Kullanıcı adınızı girin"
                           className="pl-10"
-                          autoComplete="given-name"
-                        />
-                      </FormControl>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Soyisim alanı */}
-              <FormField
-                control={form.control}
-                name="lastName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Soyisim</FormLabel>
-                    <div className="relative">
-                      <User2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="Soyadınızı girin"
-                          className="pl-10"
-                          autoComplete="family-name"
+                          autoComplete="username"
                         />
                       </FormControl>
                     </div>
@@ -141,8 +114,8 @@ const Login = () => {
 
               <div className="text-xs text-muted-foreground mt-2">
                 <p>Örnek Giriş Bilgileri:</p>
-                <p>İsim: <code className="text-foreground">Admin</code>, Soyisim: <code className="text-foreground">User</code>, Şifre: <code className="text-foreground">admin123</code></p>
-                <p>İsim: <code className="text-foreground">Viewer</code>, Soyisim: <code className="text-foreground">User</code>, Şifre: <code className="text-foreground">viewer123</code></p>
+                <p>Kullanıcı Adı: <code className="text-foreground">admin_user</code>, Şifre: <code className="text-foreground">admin123</code></p>
+                <p>Kullanıcı Adı: <code className="text-foreground">viewer_user</code>, Şifre: <code className="text-foreground">viewer123</code></p>
               </div>
             </CardContent>
             
