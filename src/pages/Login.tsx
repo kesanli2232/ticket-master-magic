@@ -20,6 +20,20 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
+/**
+ * Metni uygun formata dönüştürür (Büyük harf ile başlar, sonrası küçük harf)
+ * Örnek: "görKEM baYmaN" -> "Gorkem Bayman"
+ */
+const normalizeText = (text: string): string => {
+  if (!text) return "";
+  
+  // Boşluklara göre kelimelere ayır, her kelimeyi düzgün formatlayıp birleştir
+  return text
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+};
+
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
@@ -37,9 +51,12 @@ const Login = () => {
   const onSubmit = (values: LoginFormValues) => {
     setIsLoading(true);
     
+    // Kullanıcı adını normalize edelim
+    const normalizedUsername = normalizeText(values.username);
+    
     // Ağ isteğini simüle etmek için küçük bir gecikme ekleyin
     setTimeout(() => {
-      const success = login(values.username, values.password);
+      const success = login(normalizedUsername, values.password);
       
       if (success) {
         // Giriş başarılı olduysa kullanıcıyı admin sayfasına yönlendir
