@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, RefreshCw } from "lucide-react";
 
 const NotFound = () => {
   const location = useLocation();
@@ -16,6 +16,11 @@ const NotFound = () => {
     );
   }, [location.pathname]);
 
+  // Sayfayı ana sayfaya yönlendiren fonksiyon
+  const handleRefresh = () => {
+    window.location.href = '/';
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -26,12 +31,27 @@ const NotFound = () => {
             <AlertCircle className="h-8 w-8 text-primary" />
           </div>
           <h1 className="text-4xl font-bold mb-4">404</h1>
-          <p className="text-xl text-muted-foreground mb-8">
+          <p className="text-xl text-muted-foreground mb-4">
             Aradığınız sayfa bulunamadı veya taşınmış olabilir.
           </p>
-          <Link to="/">
-            <Button size="lg">Ana Sayfaya Dön</Button>
-          </Link>
+          <p className="text-muted-foreground mb-8">
+            Bu hata genellikle SPA uygulamalarda sayfa yenilemesi yapıldığında meydana gelir. 
+            Aşağıdaki seçeneklerden birini kullanabilirsiniz:
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to="/">
+              <Button size="lg">Ana Sayfaya Dön</Button>
+            </Link>
+            <Button 
+              variant="outline" 
+              size="lg" 
+              onClick={handleRefresh}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Sayfayı Yenile
+            </Button>
+          </div>
         </div>
       </div>
     </div>
