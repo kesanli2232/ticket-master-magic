@@ -16,25 +16,65 @@ const Admin = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [lastCheckedTime, setLastCheckedTime] = useState<Date | null>(null);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   
-  // Load tickets from Supabase
+  // Oturum kontrolü ve bilet yükleme
+  useEffect(() => {
+    // Kullanıcı oturumu açık değilse giriş sayfasına yönlendir
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    
+    const loadTickets = async () => {
+      setIsLoading(true);
+      try {
+        // Eski biletleri temizle
+        await DB.cleanupOldTickets();
+        
+        // Biletleri Supabase'den al
+        const tickets = await DB.getTickets();
+        setTickets(tickets);
+        console.log('Biletler yüklendi:', tickets.length);
+      } catch (error) {
+        console.error('Bilet yükleme hatası:', error);
+        toast({
+          title: "Veri Yükleme Hatası",
+          description: "Talepler yüklenirken bir hata oluştu",
+          variant: "destructive",
+          duration: 5000
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadTickets();
+    
+    // Son kontrol zamanını başlat
+    setLastCheckedTime(new Date());
+    
+    // Ses elementini başlat
+    audioRef.current = new Audio(NOTIFICATION_SOUND);
+  }, [isAuthenticated, navigate, toast]);
+  
+  // Biletleri yükle
   const loadTickets = useCallback(async () => {
     setIsLoading(true);
     
     try {
-      // Clean up tickets older than 7 days
+      // Eski biletleri temizle
       await DB.cleanupOldTickets();
       
-      // Get tickets from Supabase
+      // Biletleri Supabase'den al
       const tickets = await DB.getTickets();
       setTickets(tickets);
-      console.log('Tickets loaded:', tickets.length);
+      console.log('Biletler yüklendi:', tickets.length);
     } catch (error) {
-      console.error('Error loading tickets:', error);
+      console.error('Bilet yükleme hatası:', error);
       toast({
         title: "Veri Yükleme Hatası",
         description: "Talepler yüklenirken bir hata oluştu",
@@ -46,28 +86,11 @@ const Admin = () => {
     }
   }, [toast]);
   
-  // Initial load
-  useEffect(() => {
-    // Auth check
-    if (!isAuthenticated) {
-      navigate('/login');
-      return;
-    }
-    
-    loadTickets();
-    
-    // Initialize last checked time
-    setLastCheckedTime(new Date());
-    
-    // Initialize audio element
-    audioRef.current = new Audio(NOTIFICATION_SOUND);
-  }, [isAuthenticated, navigate, loadTickets]);
-  
-  // Subscribe to real-time updates
+  // Gerçek zamanlı güncellemelere abone ol
   useEffect(() => {
     if (!isAuthenticated) return;
     
-    // Subscribe to INSERT on tickets table
+    // Tickets tablosundaki INSERT olaylarına abone ol
     const channel = supabase
       .channel('tickets-channel')
       .on(
@@ -78,21 +101,21 @@ const Admin = () => {
           table: 'tickets'
         },
         async (payload) => {
-          console.log('New ticket inserted:', payload);
+          console.log('Yeni bilet eklendi:', payload);
           
-          // Play notification sound
+          // Bildirim sesi çal
           if (audioRef.current) {
-            audioRef.current.play().catch(e => console.error('Error playing notification sound:', e));
+            audioRef.current.play().catch(e => console.error('Bildirim sesi çalma hatası:', e));
           }
           
-          // Show toast notification
+          // Toast bildirimi göster
           toast({
             title: "Yeni Talep Alındı!",
             description: "Yeni bir talep oluşturuldu",
             duration: 5000
           });
           
-          // Refresh tickets
+          // Biletleri yenile
           await loadTickets();
         }
       )
@@ -104,7 +127,7 @@ const Admin = () => {
           table: 'tickets'
         },
         async () => {
-          // Refresh tickets when any ticket is updated
+          // Herhangi bir bilet güncellendiğinde biletleri yenile
           await loadTickets();
         }
       )
@@ -116,23 +139,23 @@ const Admin = () => {
           table: 'tickets'
         },
         async () => {
-          // Refresh tickets when any ticket is deleted
+          // Herhangi bir bilet silindiğinde biletleri yenile
           await loadTickets();
         }
       )
       .subscribe();
     
-    // Cleanup subscription on component unmount
+    // Bileşen kaldırıldığında aboneliği temizle
     return () => {
       supabase.removeChannel(channel);
     };
   }, [isAuthenticated, loadTickets, toast]);
   
-  // Update tickets in Supabase
+  // Biletleri Supabase'de güncelle
   const updateTickets = async (newTickets: Ticket[]) => {
     setTickets(newTickets);
-    // We don't need to update all tickets at once anymore
-    // Each CRUD operation now updates Supabase directly
+    // Artık tüm biletleri aynı anda güncellemeye gerek yok
+    // Her CRUD işlemi artık doğrudan Supabase'i güncelliyor
   };
   
   if (!isAuthenticated) {

@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, Role } from '@/types';
 import { findUserByUsername } from '@/lib/data';
@@ -19,6 +20,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [role, setRole] = useState<Role | null>(null);
   const { toast } = useToast();
 
+  // Bileşen yüklendiğinde localStorage'dan oturum bilgilerini yükle
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -43,6 +45,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setRole(foundUser.role);
       setIsAuthenticated(true);
       
+      // Oturum bilgilerini localStorage'a kaydet
       localStorage.setItem('user', JSON.stringify(foundUser));
       
       toast({
@@ -69,6 +72,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setRole(null);
     setIsAuthenticated(false);
     
+    // localStorage'dan oturum bilgilerini sil
     localStorage.removeItem('user');
     
     toast({
