@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [role, setRole] = useState<Role | null>(null);
   const { toast } = useToast();
 
-  // Bileşen yüklendiğinde localStorage'dan oturum bilgilerini yükle
+  // Load session data from localStorage when component mounts
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -29,9 +29,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(parsedUser);
         setRole(parsedUser.role);
         setIsAuthenticated(true);
-        console.log("Oturum bilgileri localStorage'dan yüklendi:", parsedUser.username);
+        console.log("Session data loaded from localStorage:", parsedUser.username);
       } catch (error) {
-        console.error("Oturum bilgileri yüklenirken hata oluştu:", error);
+        console.error("Error loading session data:", error);
         localStorage.removeItem('user');
       }
     }
@@ -45,12 +45,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setRole(foundUser.role);
       setIsAuthenticated(true);
       
-      // Oturum bilgilerini localStorage'a kaydet
+      // Save session data to localStorage
       localStorage.setItem('user', JSON.stringify(foundUser));
       
       toast({
-        title: "Giriş başarılı",
-        description: `Hoş geldiniz, ${foundUser.displayName || username}!`,
+        title: "Login successful",
+        description: `Welcome, ${foundUser.displayName || username}!`,
         duration: 3000
       });
       
@@ -58,8 +58,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     
     toast({
-      title: "Giriş başarısız",
-      description: "Geçersiz kullanıcı bilgileri",
+      title: "Login failed",
+      description: "Invalid credentials",
       variant: "destructive",
       duration: 3000
     });
@@ -72,12 +72,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setRole(null);
     setIsAuthenticated(false);
     
-    // localStorage'dan oturum bilgilerini sil
+    // Remove session data from localStorage
     localStorage.removeItem('user');
     
     toast({
-      title: "Çıkış yapıldı",
-      description: "Başarıyla çıkış yaptınız",
+      title: "Logged out",
+      description: "You have been successfully logged out",
       duration: 3000
     });
   };
@@ -92,7 +92,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth, AuthProvider içinde kullanılmalıdır');
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };

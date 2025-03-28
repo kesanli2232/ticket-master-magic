@@ -21,9 +21,9 @@ const Admin = () => {
   const { toast } = useToast();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   
-  // Oturum kontrolü ve bilet yükleme
+  // Check authentication and load tickets
   useEffect(() => {
-    // Kullanıcı oturumu açık değilse giriş sayfasına yönlendir
+    // Redirect to login page if not authenticated
     if (!isAuthenticated) {
       navigate('/login');
       return;
@@ -32,18 +32,18 @@ const Admin = () => {
     const loadTickets = async () => {
       setIsLoading(true);
       try {
-        // Eski biletleri temizle
+        // Clean up old tickets
         await DB.cleanupOldTickets();
         
-        // Biletleri Supabase'den al
+        // Get tickets from Supabase
         const tickets = await DB.getTickets();
         setTickets(tickets);
-        console.log('Biletler yüklendi:', tickets.length);
+        console.log('Tickets loaded:', tickets.length);
       } catch (error) {
-        console.error('Bilet yükleme hatası:', error);
+        console.error('Error loading tickets:', error);
         toast({
-          title: "Veri Yükleme Hatası",
-          description: "Talepler yüklenirken bir hata oluştu",
+          title: "Data Loading Error",
+          description: "There was an error loading the tickets",
           variant: "destructive",
           duration: 5000
         });
@@ -54,30 +54,30 @@ const Admin = () => {
     
     loadTickets();
     
-    // Son kontrol zamanını başlat
+    // Initialize last checked time
     setLastCheckedTime(new Date());
     
-    // Ses elementini başlat
+    // Initialize audio element
     audioRef.current = new Audio(NOTIFICATION_SOUND);
   }, [isAuthenticated, navigate, toast]);
   
-  // Biletleri yükle
+  // Function to load tickets
   const loadTickets = useCallback(async () => {
     setIsLoading(true);
     
     try {
-      // Eski biletleri temizle
+      // Clean up old tickets
       await DB.cleanupOldTickets();
       
-      // Biletleri Supabase'den al
+      // Get tickets from Supabase
       const tickets = await DB.getTickets();
       setTickets(tickets);
-      console.log('Biletler yüklendi:', tickets.length);
+      console.log('Tickets loaded:', tickets.length);
     } catch (error) {
-      console.error('Bilet yükleme hatası:', error);
+      console.error('Error loading tickets:', error);
       toast({
-        title: "Veri Yükleme Hatası",
-        description: "Talepler yüklenirken bir hata oluştu",
+        title: "Data Loading Error",
+        description: "There was an error loading the tickets",
         variant: "destructive",
         duration: 5000
       });
@@ -86,11 +86,11 @@ const Admin = () => {
     }
   }, [toast]);
   
-  // Gerçek zamanlı güncellemelere abone ol
+  // Subscribe to real-time updates
   useEffect(() => {
     if (!isAuthenticated) return;
     
-    // Tickets tablosundaki INSERT olaylarına abone ol
+    // Subscribe to INSERT events on the tickets table
     const channel = supabase
       .channel('tickets-channel')
       .on(
@@ -101,21 +101,21 @@ const Admin = () => {
           table: 'tickets'
         },
         async (payload) => {
-          console.log('Yeni bilet eklendi:', payload);
+          console.log('New ticket added:', payload);
           
-          // Bildirim sesi çal
+          // Play notification sound
           if (audioRef.current) {
-            audioRef.current.play().catch(e => console.error('Bildirim sesi çalma hatası:', e));
+            audioRef.current.play().catch(e => console.error('Error playing notification sound:', e));
           }
           
-          // Toast bildirimi göster
+          // Show toast notification
           toast({
-            title: "Yeni Talep Alındı!",
-            description: "Yeni bir talep oluşturuldu",
+            title: "New Ticket Received!",
+            description: "A new ticket has been created",
             duration: 5000
           });
           
-          // Biletleri yenile
+          // Refresh tickets
           await loadTickets();
         }
       )
@@ -127,7 +127,7 @@ const Admin = () => {
           table: 'tickets'
         },
         async () => {
-          // Herhangi bir bilet güncellendiğinde biletleri yenile
+          // Refresh tickets when any ticket is updated
           await loadTickets();
         }
       )
@@ -139,25 +139,26 @@ const Admin = () => {
           table: 'tickets'
         },
         async () => {
-          // Herhangi bir bilet silindiğinde biletleri yenile
+          // Refresh tickets when any ticket is deleted
           await loadTickets();
         }
       )
       .subscribe();
     
-    // Bileşen kaldırıldığında aboneliği temizle
+    // Clean up subscription when component unmounts
     return () => {
       supabase.removeChannel(channel);
     };
   }, [isAuthenticated, loadTickets, toast]);
   
-  // Biletleri Supabase'de güncelle
+  // Update tickets in Supabase
   const updateTickets = async (newTickets: Ticket[]) => {
     setTickets(newTickets);
-    // Artık tüm biletleri aynı anda güncellemeye gerek yok
-    // Her CRUD işlemi artık doğrudan Supabase'i güncelliyor
+    // No need to update all tickets at once anymore
+    // Each CRUD operation now directly updates Supabase
   };
   
+  // If not authenticated, return null
   if (!isAuthenticated) {
     return null;
   }
@@ -169,16 +170,16 @@ const Admin = () => {
       <main className="container mx-auto pt-24 pb-16 px-4">
         <div className="page-transition">
           <header className="mb-10">
-            <h1 className="text-3xl font-semibold mb-2">Talep Yönetimi</h1>
+            <h1 className="text-3xl font-semibold mb-2">Ticket Management</h1>
             <p className="text-muted-foreground">
-              Tüm destek taleplerini görüntüleyin, düzenleyin ve yönetin
+              View, edit, and manage all support tickets
             </p>
           </header>
           
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="w-16 h-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin"></div>
-              <p className="mt-4 text-muted-foreground">Talepler yükleniyor...</p>
+              <p className="mt-4 text-muted-foreground">Loading tickets...</p>
             </div>
           ) : (
             <TicketList tickets={tickets} setTickets={updateTickets} />
