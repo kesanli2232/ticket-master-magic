@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MessageSquare, User, User2, Lock } from 'lucide-react';
+import { MessageSquare, User, User2, Lock, LogIn } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
 // Örnek CSV verisi (gerçek projede CSV'den alınacak)
@@ -100,7 +99,17 @@ const WelcomePage = () => {
   };
 
   return (
-    <div className="page-transition min-h-screen flex items-center justify-center bg-secondary/30 px-4">
+    <div className="page-transition min-h-screen flex items-center justify-center bg-secondary/30 px-4 relative">
+      {/* Admin Login Button - Added to top-right corner */}
+      <div className="absolute top-4 right-4 z-10">
+        <Link to="/login">
+          <Button variant="outline" className="flex items-center gap-2">
+            <LogIn className="h-4 w-4" />
+            Yönetim Paneli
+          </Button>
+        </Link>
+      </div>
+
       <Card className="w-full max-w-md animate-fadeIn shadow-lg">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-6">
