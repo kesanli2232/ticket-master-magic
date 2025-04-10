@@ -289,39 +289,43 @@ const ReportPanel = ({ onClose }: ReportPanelProps) => {
                 <CardTitle>Durum Dağılımı</CardTitle>
                 <CardDescription>Taleplerin duruma göre dağılımı</CardDescription>
               </CardHeader>
-              <CardContent className="h-80">
-                <ChartContainer 
-                  config={{
-                    'Açık': { color: STATUS_COLORS['Açık'] },
-                    'İşlemde': { color: STATUS_COLORS['İşlemde'] },
-                    'Çözüldü': { color: STATUS_COLORS['Çözüldü'] },
-                    'Çözülemedi': { color: STATUS_COLORS['Çözülemedi'] },
-                  }}
-                >
-                  <PieChart>
-                    <Pie
-                      data={statusSummary}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="ticket_count"
-                      nameKey="status"
-                      label={({ status, ticket_count, percent }) => 
-                        `${status}: ${ticket_count} (${(percent * 100).toFixed(0)}%)`
-                      }
-                    >
-                      {statusSummary.map((entry, index) => (
-                        <Cell 
-                          key={`cell-${index}`} 
-                          fill={STATUS_COLORS[entry.status as keyof typeof STATUS_COLORS] || COLORS[index % COLORS.length]} 
-                        />
-                      ))}
-                    </Pie>
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                  </PieChart>
-                </ChartContainer>
+              <CardContent className="h-[250px]">
+                <div className="w-full h-full">
+                  <ChartContainer 
+                    config={{
+                      'Açık': { color: STATUS_COLORS['Açık'] },
+                      'İşlemde': { color: STATUS_COLORS['İşlemde'] },
+                      'Çözüldü': { color: STATUS_COLORS['Çözüldü'] },
+                      'Çözülemedi': { color: STATUS_COLORS['Çözülemedi'] },
+                    }}
+                  >
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={statusSummary}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="ticket_count"
+                          nameKey="status"
+                          label={({ status, ticket_count, percent }) => 
+                            `${status}: ${ticket_count} (${(percent * 100).toFixed(0)}%)`
+                          }
+                        >
+                          {statusSummary.map((entry, index) => (
+                            <Cell 
+                              key={`cell-${index}`} 
+                              fill={STATUS_COLORS[entry.status as keyof typeof STATUS_COLORS] || COLORS[index % COLORS.length]} 
+                            />
+                          ))}
+                        </Pie>
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
+                </div>
               </CardContent>
             </Card>
 
@@ -331,42 +335,46 @@ const ReportPanel = ({ onClose }: ReportPanelProps) => {
                 <CardTitle>Öncelik Dağılımı</CardTitle>
                 <CardDescription>Taleplerin önceliğe göre dağılımı</CardDescription>
               </CardHeader>
-              <CardContent className="h-80">
-                <ChartContainer
-                  config={{
-                    'Çok Önemli': { color: '#ef4444' },
-                    'Önemli': { color: '#f97316' },
-                    'İkincil': { color: '#3b82f6' },
-                  }}
-                >
-                  <PieChart>
-                    <Pie
-                      data={priorityDistribution}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="ticket_count"
-                      nameKey="priority"
-                      label={({ priority, ticket_count, percent }) => 
-                        `${priority}: ${ticket_count} (${(percent * 100).toFixed(0)}%)`
-                      }
-                    >
-                      {priorityDistribution.map((entry, index) => (
-                        <Cell 
-                          key={`cell-${index}`} 
-                          fill={entry.priority === 'Çok Önemli' 
-                            ? '#ef4444' 
-                            : entry.priority === 'Önemli' 
-                              ? '#f97316' 
-                              : '#3b82f6'} 
-                        />
-                      ))}
-                    </Pie>
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                  </PieChart>
-                </ChartContainer>
+              <CardContent className="h-[250px]">
+                <div className="w-full h-full">
+                  <ChartContainer
+                    config={{
+                      'Çok Önemli': { color: '#ef4444' },
+                      'Önemli': { color: '#f97316' },
+                      'İkincil': { color: '#3b82f6' },
+                    }}
+                  >
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={priorityDistribution}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="ticket_count"
+                          nameKey="priority"
+                          label={({ priority, ticket_count, percent }) => 
+                            `${priority}: ${ticket_count} (${(percent * 100).toFixed(0)}%)`
+                          }
+                        >
+                          {priorityDistribution.map((entry, index) => (
+                            <Cell 
+                              key={`cell-${index}`} 
+                              fill={entry.priority === 'Çok Önemli' 
+                                ? '#ef4444' 
+                                : entry.priority === 'Önemli' 
+                                  ? '#f97316' 
+                                  : '#3b82f6'} 
+                            />
+                          ))}
+                        </Pie>
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -377,26 +385,30 @@ const ReportPanel = ({ onClose }: ReportPanelProps) => {
               <CardTitle>Saatlik Dağılım</CardTitle>
               <CardDescription>Taleplerin saate göre dağılımı</CardDescription>
             </CardHeader>
-            <CardContent className="h-96">
-              <ChartContainer config={{}}>
-                <BarChart data={hourlyDistribution}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="hour_of_day"
-                    label={{ value: 'Saat', position: 'insideBottom', offset: -5 }}
-                    tickFormatter={(hour) => `${hour}:00`}
-                  />
-                  <YAxis
-                    label={{ value: 'Talep Sayısı', angle: -90, position: 'insideLeft' }}
-                  />
-                  <Tooltip 
-                    formatter={(value) => [`${value} talep`, 'Talep Sayısı']}
-                    labelFormatter={(hour) => `Saat: ${hour}:00`}
-                  />
-                  <Legend />
-                  <Bar dataKey="ticket_count" name="Talep Sayısı" fill="#3b82f6" />
-                </BarChart>
-              </ChartContainer>
+            <CardContent className="h-[300px]">
+              <div className="w-full h-full">
+                <ChartContainer config={{}}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={hourlyDistribution}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis 
+                        dataKey="hour_of_day"
+                        label={{ value: 'Saat', position: 'insideBottom', offset: -5 }}
+                        tickFormatter={(hour) => `${hour}:00`}
+                      />
+                      <YAxis
+                        label={{ value: 'Talep Sayısı', angle: -90, position: 'insideLeft' }}
+                      />
+                      <Tooltip 
+                        formatter={(value) => [`${value} talep`, 'Talep Sayısı']}
+                        labelFormatter={(hour) => `Saat: ${hour}:00`}
+                      />
+                      <Legend />
+                      <Bar dataKey="ticket_count" name="Talep Sayısı" fill="#3b82f6" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </ChartContainer>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -507,28 +519,32 @@ const ReportPanel = ({ onClose }: ReportPanelProps) => {
               <CardTitle>Departman Analizi</CardTitle>
               <CardDescription>Departmanlara göre talep dağılımı</CardDescription>
             </CardHeader>
-            <CardContent className="h-[600px]">
-              <ChartContainer config={{}}>
-                <BarChart
-                  data={departmentDistribution}
-                  layout="vertical"
-                  margin={{ top: 20, right: 30, left: 220, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" />
-                  <YAxis 
-                    type="category" 
-                    dataKey="created_by_department" 
-                    width={200}
-                    tick={{ fontSize: 12 }}
-                  />
-                  <Tooltip 
-                    formatter={(value) => [`${value} talep`, 'Talep Sayısı']}
-                  />
-                  <Legend />
-                  <Bar dataKey="ticket_count" name="Talep Sayısı" fill="#8884d8" />
-                </BarChart>
-              </ChartContainer>
+            <CardContent className="h-[500px]">
+              <div className="w-full h-full">
+                <ChartContainer config={{}}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={departmentDistribution}
+                      layout="vertical"
+                      margin={{ top: 20, right: 30, left: 180, bottom: 5 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis type="number" />
+                      <YAxis 
+                        type="category" 
+                        dataKey="created_by_department" 
+                        width={180}
+                        tick={{ fontSize: 11 }}
+                      />
+                      <Tooltip 
+                        formatter={(value) => [`${value} talep`, 'Talep Sayısı']}
+                      />
+                      <Legend />
+                      <Bar dataKey="ticket_count" name="Talep Sayısı" fill="#8884d8" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </ChartContainer>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -540,19 +556,23 @@ const ReportPanel = ({ onClose }: ReportPanelProps) => {
               <CardTitle>Kullanıcı Bazlı Analiz</CardTitle>
               <CardDescription>Atanan kişi bazında talep dağılımı</CardDescription>
             </CardHeader>
-            <CardContent className="h-96">
-              <ChartContainer config={{}}>
-                <BarChart data={ticketsPerUser}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="assigned_to" />
-                  <YAxis />
-                  <Tooltip 
-                    formatter={(value) => [`${value} talep`, 'Talep Sayısı']}
-                  />
-                  <Legend />
-                  <Bar dataKey="ticket_count" name="Talep Sayısı" fill="#8884d8" />
-                </BarChart>
-              </ChartContainer>
+            <CardContent className="h-[300px]">
+              <div className="w-full h-full">
+                <ChartContainer config={{}}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={ticketsPerUser}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="assigned_to" />
+                      <YAxis />
+                      <Tooltip 
+                        formatter={(value) => [`${value} talep`, 'Talep Sayısı']}
+                      />
+                      <Legend />
+                      <Bar dataKey="ticket_count" name="Talep Sayısı" fill="#8884d8" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </ChartContainer>
+              </div>
             </CardContent>
           </Card>
 
@@ -562,30 +582,32 @@ const ReportPanel = ({ onClose }: ReportPanelProps) => {
               <CardDescription>Atanan kişi ve duruma göre dağılım</CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Atanan Kişi</TableHead>
-                    <TableHead className="text-right">Durum</TableHead>
-                    <TableHead className="text-right">Talep Sayısı</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {ticketsPerUserStatus.map((item, index) => (
-                    <TableRow key={`${item.assigned_to}-${item.status}-${index}`}>
-                      <TableCell className="font-medium">{item.assigned_to}</TableCell>
-                      <TableCell className="text-right flex items-center justify-end gap-2">
-                        <div 
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: STATUS_COLORS[item.status as keyof typeof STATUS_COLORS] || '#888' }}
-                        ></div>
-                        {item.status}
-                      </TableCell>
-                      <TableCell className="text-right">{item.ticket_count}</TableCell>
+              <div className="max-h-[400px] overflow-y-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Atanan Kişi</TableHead>
+                      <TableHead className="text-right">Durum</TableHead>
+                      <TableHead className="text-right">Talep Sayısı</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {ticketsPerUserStatus.map((item, index) => (
+                      <TableRow key={`${item.assigned_to}-${item.status}-${index}`}>
+                        <TableCell className="font-medium">{item.assigned_to}</TableCell>
+                        <TableCell className="text-right flex items-center justify-end gap-2">
+                          <div 
+                            className="w-3 h-3 rounded-full"
+                            style={{ backgroundColor: STATUS_COLORS[item.status as keyof typeof STATUS_COLORS] || '#888' }}
+                          ></div>
+                          {item.status}
+                        </TableCell>
+                        <TableCell className="text-right">{item.ticket_count}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -598,39 +620,41 @@ const ReportPanel = ({ onClose }: ReportPanelProps) => {
               <CardDescription>Tüm taleplerin özet listesi</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>ID</TableHead>
-                      <TableHead>Başlık</TableHead>
-                      <TableHead>Atanan Kişi</TableHead>
-                      <TableHead>Oluşturulma Tarihi</TableHead>
-                      <TableHead>Durum</TableHead>
-                      <TableHead>Çözüm Tarihi</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {ticketSummary.map((ticket) => (
-                      <TableRow key={ticket.id}>
-                        <TableCell className="font-medium">{ticket.id && ticket.id.substring(0, 8)}...</TableCell>
-                        <TableCell>{ticket.title}</TableCell>
-                        <TableCell>{ticket.assigned_to}</TableCell>
-                        <TableCell>{formatDate(ticket.created_at)}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <div 
-                              className="w-2 h-2 rounded-full"
-                              style={{ backgroundColor: STATUS_COLORS[ticket.status as keyof typeof STATUS_COLORS] || '#888' }}
-                            ></div>
-                            {ticket.status}
-                          </div>
-                        </TableCell>
-                        <TableCell>{ticket.resolved_at ? formatDate(ticket.resolved_at) : 'Çözülmedi'}</TableCell>
+              <div className="max-h-[550px] overflow-y-auto">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>ID</TableHead>
+                        <TableHead>Başlık</TableHead>
+                        <TableHead>Atanan Kişi</TableHead>
+                        <TableHead>Oluşturulma Tarihi</TableHead>
+                        <TableHead>Durum</TableHead>
+                        <TableHead>Çözüm Tarihi</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {ticketSummary.map((ticket) => (
+                        <TableRow key={ticket.id}>
+                          <TableCell className="font-medium">{ticket.id && ticket.id.substring(0, 8)}...</TableCell>
+                          <TableCell>{ticket.title}</TableCell>
+                          <TableCell>{ticket.assigned_to}</TableCell>
+                          <TableCell>{formatDate(ticket.created_at)}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <div 
+                                className="w-2 h-2 rounded-full"
+                                style={{ backgroundColor: STATUS_COLORS[ticket.status as keyof typeof STATUS_COLORS] || '#888' }}
+                              ></div>
+                              {ticket.status}
+                            </div>
+                          </TableCell>
+                          <TableCell>{ticket.resolved_at ? formatDate(ticket.resolved_at) : 'Çözülmedi'}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
             </CardContent>
           </Card>
