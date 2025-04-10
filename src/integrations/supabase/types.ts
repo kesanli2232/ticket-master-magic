@@ -9,6 +9,105 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      average_resolution_time: {
+        Row: {
+          avg_resolution_time: unknown | null
+        }
+        Insert: {
+          avg_resolution_time?: unknown | null
+        }
+        Update: {
+          avg_resolution_time?: unknown | null
+        }
+        Relationships: []
+      }
+      ticket_distribution_by_department: {
+        Row: {
+          created_by_department: string | null
+          ticket_count: number | null
+        }
+        Insert: {
+          created_by_department?: string | null
+          ticket_count?: number | null
+        }
+        Update: {
+          created_by_department?: string | null
+          ticket_count?: number | null
+        }
+        Relationships: []
+      }
+      ticket_hourly_distribution: {
+        Row: {
+          hour_of_day: number | null
+          ticket_count: number | null
+        }
+        Insert: {
+          hour_of_day?: number | null
+          ticket_count?: number | null
+        }
+        Update: {
+          hour_of_day?: number | null
+          ticket_count?: number | null
+        }
+        Relationships: []
+      }
+      ticket_priority_distribution: {
+        Row: {
+          priority: string | null
+          ticket_count: number | null
+        }
+        Insert: {
+          priority?: string | null
+          ticket_count?: number | null
+        }
+        Update: {
+          priority?: string | null
+          ticket_count?: number | null
+        }
+        Relationships: []
+      }
+      ticket_status_summary: {
+        Row: {
+          status: string | null
+          ticket_count: number | null
+        }
+        Insert: {
+          status?: string | null
+          ticket_count?: number | null
+        }
+        Update: {
+          status?: string | null
+          ticket_count?: number | null
+        }
+        Relationships: []
+      }
+      ticket_summary_report: {
+        Row: {
+          assigned_to: string | null
+          created_at: string | null
+          id: string | null
+          resolved_at: string | null
+          status: string | null
+          title: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string | null
+          id?: string | null
+          resolved_at?: string | null
+          status?: string | null
+          title?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string | null
+          id?: string | null
+          resolved_at?: string | null
+          status?: string | null
+          title?: string | null
+        }
+        Relationships: []
+      }
       tickets: {
         Row: {
           assigned_to: string
@@ -21,6 +120,7 @@ export type Database = {
           ip_address: string | null
           priority: string
           rejection_comment: string | null
+          resolved_at: string | null
           status: string
           title: string
         }
@@ -35,6 +135,7 @@ export type Database = {
           ip_address?: string | null
           priority: string
           rejection_comment?: string | null
+          resolved_at?: string | null
           status: string
           title: string
         }
@@ -49,8 +150,69 @@ export type Database = {
           ip_address?: string | null
           priority?: string
           rejection_comment?: string | null
+          resolved_at?: string | null
           status?: string
           title?: string
+        }
+        Relationships: []
+      }
+      tickets_last_7_days: {
+        Row: {
+          assigned_to: string | null
+          created_at: string | null
+          id: string | null
+          resolved_at: string | null
+          status: string | null
+          title: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string | null
+          id?: string | null
+          resolved_at?: string | null
+          status?: string | null
+          title?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string | null
+          id?: string | null
+          resolved_at?: string | null
+          status?: string | null
+          title?: string | null
+        }
+        Relationships: []
+      }
+      tickets_per_user: {
+        Row: {
+          assigned_to: string | null
+          ticket_count: number | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          ticket_count?: number | null
+        }
+        Update: {
+          assigned_to?: string | null
+          ticket_count?: number | null
+        }
+        Relationships: []
+      }
+      tickets_per_user_status: {
+        Row: {
+          assigned_to: string | null
+          status: string | null
+          ticket_count: number | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          status?: string | null
+          ticket_count?: number | null
+        }
+        Update: {
+          assigned_to?: string | null
+          status?: string | null
+          ticket_count?: number | null
         }
         Relationships: []
       }
