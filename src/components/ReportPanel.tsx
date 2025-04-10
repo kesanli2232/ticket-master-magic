@@ -13,43 +13,43 @@ interface ReportPanelProps {
 }
 
 interface TicketSummaryReport {
-  id: string;
-  title: string;
-  assigned_to: string;
-  created_at: string;
-  status: string;
+  id: string | null;
+  title: string | null;
+  assigned_to: string | null;
+  created_at: string | null;
+  status: string | null;
   resolved_at: string | null;
 }
 
 interface TicketStatusSummary {
-  status: string;
-  ticket_count: number;
+  status: string | null;
+  ticket_count: number | null;
 }
 
 interface TicketPriorityDistribution {
-  priority: string;
-  ticket_count: number;
+  priority: string | null;
+  ticket_count: number | null;
 }
 
 interface TicketByDepartment {
-  created_by_department: string;
-  ticket_count: number;
+  created_by_department: string | null;
+  ticket_count: number | null;
 }
 
 interface TicketsPerUser {
-  assigned_to: string;
-  ticket_count: number;
+  assigned_to: string | null;
+  ticket_count: number | null;
 }
 
 interface TicketsPerUserStatus {
-  assigned_to: string;
-  status: string;
-  ticket_count: number;
+  assigned_to: string | null;
+  status: string | null;
+  ticket_count: number | null;
 }
 
 interface TicketHourlyDistribution {
-  hour_of_day: number;
-  ticket_count: number;
+  hour_of_day: number | null;
+  ticket_count: number | null;
 }
 
 interface AverageResolutionTime {
@@ -84,13 +84,15 @@ const ReportPanel = ({ onClose }: ReportPanelProps) => {
     const fetchReportData = async () => {
       setIsLoading(true);
       try {
+        // Using type casts to correctly handle the Supabase query responses
+
         // Fetch ticket summary report
         const { data: summaryData, error: summaryError } = await supabase
           .from('ticket_summary_report')
           .select('*');
         
         if (summaryError) throw summaryError;
-        setTicketSummary(summaryData || []);
+        setTicketSummary(summaryData as TicketSummaryReport[] || []);
 
         // Fetch tickets from last 7 days
         const { data: recentData, error: recentError } = await supabase
@@ -98,7 +100,7 @@ const ReportPanel = ({ onClose }: ReportPanelProps) => {
           .select('*');
         
         if (recentError) throw recentError;
-        setRecentTickets(recentData || []);
+        setRecentTickets(recentData as TicketSummaryReport[] || []);
 
         // Fetch ticket status summary
         const { data: statusData, error: statusError } = await supabase
@@ -106,7 +108,7 @@ const ReportPanel = ({ onClose }: ReportPanelProps) => {
           .select('*');
         
         if (statusError) throw statusError;
-        setStatusSummary(statusData || []);
+        setStatusSummary(statusData as TicketStatusSummary[] || []);
 
         // Fetch ticket priority distribution
         const { data: priorityData, error: priorityError } = await supabase
@@ -114,7 +116,7 @@ const ReportPanel = ({ onClose }: ReportPanelProps) => {
           .select('*');
         
         if (priorityError) throw priorityError;
-        setPriorityDistribution(priorityData || []);
+        setPriorityDistribution(priorityData as TicketPriorityDistribution[] || []);
 
         // Fetch department distribution
         const { data: deptData, error: deptError } = await supabase
@@ -122,7 +124,7 @@ const ReportPanel = ({ onClose }: ReportPanelProps) => {
           .select('*');
         
         if (deptError) throw deptError;
-        setDepartmentDistribution(deptData || []);
+        setDepartmentDistribution(deptData as TicketByDepartment[] || []);
 
         // Fetch tickets per user
         const { data: userTicketsData, error: userTicketsError } = await supabase
@@ -130,7 +132,7 @@ const ReportPanel = ({ onClose }: ReportPanelProps) => {
           .select('*');
         
         if (userTicketsError) throw userTicketsError;
-        setTicketsPerUser(userTicketsData || []);
+        setTicketsPerUser(userTicketsData as TicketsPerUser[] || []);
 
         // Fetch tickets per user by status
         const { data: userStatusData, error: userStatusError } = await supabase
@@ -138,7 +140,7 @@ const ReportPanel = ({ onClose }: ReportPanelProps) => {
           .select('*');
         
         if (userStatusError) throw userStatusError;
-        setTicketsPerUserStatus(userStatusData || []);
+        setTicketsPerUserStatus(userStatusData as TicketsPerUserStatus[] || []);
 
         // Fetch hourly distribution
         const { data: hourlyData, error: hourlyError } = await supabase
@@ -146,7 +148,7 @@ const ReportPanel = ({ onClose }: ReportPanelProps) => {
           .select('*');
         
         if (hourlyError) throw hourlyError;
-        setHourlyDistribution(hourlyData || []);
+        setHourlyDistribution(hourlyData as TicketHourlyDistribution[] || []);
 
         // Fetch average resolution time
         const { data: avgTimeData, error: avgTimeError } = await supabase
@@ -155,7 +157,7 @@ const ReportPanel = ({ onClose }: ReportPanelProps) => {
         
         if (avgTimeError) throw avgTimeError;
         if (avgTimeData && avgTimeData.length > 0) {
-          setAvgResolutionTime(avgTimeData[0].avg_resolution_time);
+          setAvgResolutionTime((avgTimeData[0] as AverageResolutionTime).avg_resolution_time);
         }
 
       } catch (error) {
@@ -419,7 +421,7 @@ const ReportPanel = ({ onClose }: ReportPanelProps) => {
                   <TableBody>
                     {statusSummary.map((item) => {
                       const total = statusSummary.reduce((acc, curr) => acc + (curr.ticket_count || 0), 0);
-                      const percentage = total > 0 ? (item.ticket_count / total) * 100 : 0;
+                      const percentage = total > 0 ? ((item.ticket_count || 0) / total) * 100 : 0;
                       return (
                         <TableRow key={item.status}>
                           <TableCell className="font-medium flex items-center gap-2">
@@ -463,7 +465,7 @@ const ReportPanel = ({ onClose }: ReportPanelProps) => {
                   <TableBody>
                     {priorityDistribution.map((item) => {
                       const total = priorityDistribution.reduce((acc, curr) => acc + (curr.ticket_count || 0), 0);
-                      const percentage = total > 0 ? (item.ticket_count / total) * 100 : 0;
+                      const percentage = total > 0 ? ((item.ticket_count || 0) / total) * 100 : 0;
                       return (
                         <TableRow key={item.priority}>
                           <TableCell className="font-medium flex items-center gap-2">
@@ -611,7 +613,7 @@ const ReportPanel = ({ onClose }: ReportPanelProps) => {
                   <TableBody>
                     {ticketSummary.map((ticket) => (
                       <TableRow key={ticket.id}>
-                        <TableCell className="font-medium">{ticket.id.substring(0, 8)}...</TableCell>
+                        <TableCell className="font-medium">{ticket.id && ticket.id.substring(0, 8)}...</TableCell>
                         <TableCell>{ticket.title}</TableCell>
                         <TableCell>{ticket.assigned_to}</TableCell>
                         <TableCell>{formatDate(ticket.created_at)}</TableCell>
