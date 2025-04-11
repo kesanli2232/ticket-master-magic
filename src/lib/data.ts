@@ -1,4 +1,3 @@
-
 import { User, Ticket, Department, Status, Priority, AssignedTo } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -149,6 +148,7 @@ export const DB = {
         console.error('Error adding ticket to Supabase:', error);
       } else {
         console.log('Ticket added successfully');
+        // The real-time subscription in ReportPanel will handle the update
       }
     } catch (error) {
       console.error('Error adding ticket to Supabase:', error);
@@ -178,6 +178,7 @@ export const DB = {
         console.error('Error updating ticket in Supabase:', error);
       } else {
         console.log('Ticket updated successfully');
+        // The real-time subscription in ReportPanel will handle the update
       }
     } catch (error) {
       console.error('Error updating ticket in Supabase:', error);
@@ -196,6 +197,7 @@ export const DB = {
         console.error('Error deleting ticket from Supabase:', error);
       } else {
         console.log('Ticket deleted successfully');
+        // The real-time subscription in ReportPanel will handle the update
       }
     } catch (error) {
       console.error('Error deleting ticket from Supabase:', error);

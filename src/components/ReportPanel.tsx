@@ -80,99 +80,136 @@ const ReportPanel = ({ onClose }: ReportPanelProps) => {
     'Çözülemedi': '#ef4444'
   };
 
-  useEffect(() => {
-    const fetchReportData = async () => {
-      setIsLoading(true);
-      try {
-        // Using type casts to correctly handle the Supabase query responses
+  // Function to fetch report data
+  const fetchReportData = async () => {
+    setIsLoading(true);
+    try {
+      console.log('Fetching report data...');
+      // Using type casts to correctly handle the Supabase query responses
 
-        // Fetch ticket summary report
-        const { data: summaryData, error: summaryError } = await supabase
-          .from('ticket_summary_report')
-          .select('*');
-        
-        if (summaryError) throw summaryError;
-        setTicketSummary(summaryData as TicketSummaryReport[] || []);
+      // Fetch ticket summary report
+      const { data: summaryData, error: summaryError } = await supabase
+        .from('ticket_summary_report')
+        .select('*');
+      
+      if (summaryError) throw summaryError;
+      setTicketSummary(summaryData as TicketSummaryReport[] || []);
 
-        // Fetch tickets from last 7 days
-        const { data: recentData, error: recentError } = await supabase
-          .from('tickets_last_7_days')
-          .select('*');
-        
-        if (recentError) throw recentError;
-        setRecentTickets(recentData as TicketSummaryReport[] || []);
+      // Fetch tickets from last 7 days
+      const { data: recentData, error: recentError } = await supabase
+        .from('tickets_last_7_days')
+        .select('*');
+      
+      if (recentError) throw recentError;
+      setRecentTickets(recentData as TicketSummaryReport[] || []);
 
-        // Fetch ticket status summary
-        const { data: statusData, error: statusError } = await supabase
-          .from('ticket_status_summary')
-          .select('*');
-        
-        if (statusError) throw statusError;
-        setStatusSummary(statusData as TicketStatusSummary[] || []);
+      // Fetch ticket status summary
+      const { data: statusData, error: statusError } = await supabase
+        .from('ticket_status_summary')
+        .select('*');
+      
+      if (statusError) throw statusError;
+      setStatusSummary(statusData as TicketStatusSummary[] || []);
 
-        // Fetch ticket priority distribution
-        const { data: priorityData, error: priorityError } = await supabase
-          .from('ticket_priority_distribution')
-          .select('*');
-        
-        if (priorityError) throw priorityError;
-        setPriorityDistribution(priorityData as TicketPriorityDistribution[] || []);
+      // Fetch ticket priority distribution
+      const { data: priorityData, error: priorityError } = await supabase
+        .from('ticket_priority_distribution')
+        .select('*');
+      
+      if (priorityError) throw priorityError;
+      setPriorityDistribution(priorityData as TicketPriorityDistribution[] || []);
 
-        // Fetch department distribution
-        const { data: deptData, error: deptError } = await supabase
-          .from('ticket_distribution_by_department')
-          .select('*');
-        
-        if (deptError) throw deptError;
-        setDepartmentDistribution(deptData as TicketByDepartment[] || []);
+      // Fetch department distribution
+      const { data: deptData, error: deptError } = await supabase
+        .from('ticket_distribution_by_department')
+        .select('*');
+      
+      if (deptError) throw deptError;
+      setDepartmentDistribution(deptData as TicketByDepartment[] || []);
 
-        // Fetch tickets per user
-        const { data: userTicketsData, error: userTicketsError } = await supabase
-          .from('tickets_per_user')
-          .select('*');
-        
-        if (userTicketsError) throw userTicketsError;
-        setTicketsPerUser(userTicketsData as TicketsPerUser[] || []);
+      // Fetch tickets per user
+      const { data: userTicketsData, error: userTicketsError } = await supabase
+        .from('tickets_per_user')
+        .select('*');
+      
+      if (userTicketsError) throw userTicketsError;
+      setTicketsPerUser(userTicketsData as TicketsPerUser[] || []);
 
-        // Fetch tickets per user by status
-        const { data: userStatusData, error: userStatusError } = await supabase
-          .from('tickets_per_user_status')
-          .select('*');
-        
-        if (userStatusError) throw userStatusError;
-        setTicketsPerUserStatus(userStatusData as TicketsPerUserStatus[] || []);
+      // Fetch tickets per user by status
+      const { data: userStatusData, error: userStatusError } = await supabase
+        .from('tickets_per_user_status')
+        .select('*');
+      
+      if (userStatusError) throw userStatusError;
+      setTicketsPerUserStatus(userStatusData as TicketsPerUserStatus[] || []);
 
-        // Fetch hourly distribution
-        const { data: hourlyData, error: hourlyError } = await supabase
-          .from('ticket_hourly_distribution')
-          .select('*');
-        
-        if (hourlyError) throw hourlyError;
-        setHourlyDistribution(hourlyData as TicketHourlyDistribution[] || []);
+      // Fetch hourly distribution
+      const { data: hourlyData, error: hourlyError } = await supabase
+        .from('ticket_hourly_distribution')
+        .select('*');
+      
+      if (hourlyError) throw hourlyError;
+      setHourlyDistribution(hourlyData as TicketHourlyDistribution[] || []);
 
-        // Fetch average resolution time
-        const { data: avgTimeData, error: avgTimeError } = await supabase
-          .from('average_resolution_time')
-          .select('*');
-        
-        if (avgTimeError) throw avgTimeError;
-        if (avgTimeData && avgTimeData.length > 0) {
-          setAvgResolutionTime((avgTimeData[0] as AverageResolutionTime).avg_resolution_time);
-        }
-
-      } catch (error) {
-        console.error('Error fetching report data:', error);
-        toast({
-          title: "Rapor Verileri Yüklenemedi",
-          description: "Rapor verileri alınırken bir hata oluştu",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
+      // Fetch average resolution time
+      const { data: avgTimeData, error: avgTimeError } = await supabase
+        .from('average_resolution_time')
+        .select('*');
+      
+      if (avgTimeError) throw avgTimeError;
+      if (avgTimeData && avgTimeData.length > 0) {
+        setAvgResolutionTime((avgTimeData[0] as AverageResolutionTime).avg_resolution_time);
       }
-    };
 
+      console.log('Report data fetched successfully');
+
+    } catch (error) {
+      console.error('Error fetching report data:', error);
+      toast({
+        title: "Rapor Verileri Yüklenemedi",
+        description: "Rapor verileri alınırken bir hata oluştu",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Initial data load
+  useEffect(() => {
     fetchReportData();
+  }, [toast]);
+
+  // Set up real-time subscription to ticket changes
+  useEffect(() => {
+    // Subscribe to changes in the tickets table
+    const channel = supabase
+      .channel('report-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
+          schema: 'public',
+          table: 'tickets'
+        },
+        (payload) => {
+          console.log('Database change detected:', payload);
+          // Refresh all report data when any change to tickets occurs
+          fetchReportData();
+          
+          toast({
+            title: "Rapor Verileri Güncellendi",
+            description: "Talep değişikliği nedeniyle raporlar güncellendi",
+            duration: 3000
+          });
+        }
+      )
+      .subscribe();
+
+    // Clean up the subscription when the component unmounts
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [toast]);
 
   // Format the average resolution time to be more readable
