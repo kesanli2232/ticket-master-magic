@@ -1,3 +1,4 @@
+
 import { User, Ticket, Department, Status, Priority, AssignedTo } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -32,16 +33,25 @@ export const getUsers = async (): Promise<User[]> => {
 // Kullanıcıları Supabase'den getiren fonksiyon - artık users dizisi yerine bunu kullanacağız
 export const findUserByUsername = async (username: string): Promise<User | undefined> => {
   try {
+    console.log("Looking for user with username:", username);
+    
     const { data, error } = await supabase
       .from('app_users')
       .select('*')
-      .ilike('username', username)
-      .single();
+      .eq('username', username)
+      .maybeSingle();
     
-    if (error || !data) {
-      console.error('Kullanıcı bulunamadı:', error);
+    if (error) {
+      console.error('Kullanıcı aranırken hata:', error);
       return undefined;
     }
+    
+    if (!data) {
+      console.log("Kullanıcı bulunamadı:", username);
+      return undefined;
+    }
+    
+    console.log("Bulunan kullanıcı:", data);
     
     return {
       id: data.id,

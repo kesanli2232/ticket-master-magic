@@ -36,18 +36,21 @@ const Login = () => {
 
   const onSubmit = async (values: LoginFormValues) => {
     setIsLoading(true);
+    console.log("Form değerleri:", values);
     
-    // Ağ isteğini simüle etmek için küçük bir gecikme ekleyin
-    setTimeout(async () => {
+    try {
+      // Doğrudan formdan gelen kullanıcı adını kullanıyoruz
       const success = await login(values.username, values.password);
       
       if (success) {
         // Giriş başarılı olduysa kullanıcıyı admin sayfasına yönlendir
         navigate('/admin');
       }
-      
+    } catch (error) {
+      console.error("Giriş hatası:", error);
+    } finally {
       setIsLoading(false);
-    }, 800);
+    }
   };
 
   return (
@@ -114,7 +117,7 @@ const Login = () => {
 
               <div className="text-xs text-muted-foreground mt-2">
                 <p>Örnek Giriş Bilgileri:</p>
-                <p>Kullanıcı adlarından birini ve şifre olarak <code className="text-foreground">admin</code> kullanabilirsiniz.</p>
+                <p>Kullanıcı adını tam olarak yazın ve şifre olarak <code className="text-foreground">admin</code> kullanın</p>
               </div>
             </CardContent>
             

@@ -39,7 +39,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
+      console.log("Attempting login with:", username);
       const foundUser = await findUserByUsername(username);
+      
+      // Debug için konsola basalım
+      console.log("Found user:", foundUser);
       
       if (foundUser && foundUser.password === password) {
         setUser(foundUser);
