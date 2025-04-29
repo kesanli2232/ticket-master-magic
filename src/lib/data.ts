@@ -1,22 +1,60 @@
 import { User, Ticket, Department, Status, Priority, AssignedTo } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
 
-export const users: User[] = [
-  {
-    id: '1',
-    username: 'admin_user',
-    password: 'admin123', // Gerçek bir uygulamada hashlenmesi gerekir
-    role: 'admin',
-    displayName: 'Admin User'
-  },
-  {
-    id: '2',
-    username: 'viewer_user',
-    password: 'viewer123', // Gerçek bir uygulamada hashlenmesi gerekir
-    role: 'viewer',
-    displayName: 'Viewer User'
+// Supabase'den kullanıcıları getirmek için fonksiyon
+export const getUsers = async (): Promise<User[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('app_users')
+      .select('*');
+    
+    if (error) {
+      console.error('Supabase\'den kullanıcılar getirilirken hata oluştu:', error);
+      return [];
+    }
+    
+    // Verileri User tipine dönüştürelim
+    const users: User[] = data.map(user => ({
+      id: user.id,
+      username: user.username,
+      password: user.password,
+      role: user.role as 'admin' | 'viewer',
+      displayName: user.display_name || user.username
+    }));
+    
+    return users;
+  } catch (error) {
+    console.error('Kullanıcılar getirilirken hata:', error);
+    return [];
   }
-];
+};
+
+// Kullanıcıları Supabase'den getiren fonksiyon - artık users dizisi yerine bunu kullanacağız
+export const findUserByUsername = async (username: string): Promise<User | undefined> => {
+  try {
+    const { data, error } = await supabase
+      .from('app_users')
+      .select('*')
+      .ilike('username', username)
+      .single();
+    
+    if (error || !data) {
+      console.error('Kullanıcı bulunamadı:', error);
+      return undefined;
+    }
+    
+    return {
+      id: data.id,
+      username: data.username,
+      password: data.password,
+      role: data.role as 'admin' | 'viewer',
+      displayName: data.display_name || data.username
+    };
+  } catch (error) {
+    console.error('Kullanıcı aranırken hata:', error);
+    return undefined;
+  }
+};
 
 export const departments: Department[] = [
   'Afet İşleri Müdürlüğü',
@@ -232,6 +270,14 @@ export const generateMockTickets = (): Ticket[] => {
   return [];
 };
 
-export const findUserByUsername = (username: string): User | undefined => {
-  return users.find(user => user.username === username);
-};
+// Eski users dizisi - sadece yedek olarak tutuyoruz, artık kullanılmayacak
+export const users: User[] = [
+  {
+    id: '1',
+    username: 'admin_user',
+    password: 'admin',
+    role: 'admin',
+    displayName: 'Admin User'
+  }
+  // Diğer kullanıcılar kaldırıldı, artık Supabase'den gelecek
+];

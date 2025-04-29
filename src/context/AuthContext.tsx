@@ -8,7 +8,7 @@ type AuthContextType = {
   isAuthenticated: boolean;
   user: User | null;
   role: Role | null;
-  login: (username: string, password: string) => boolean;
+  login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
 };
 
@@ -37,34 +37,47 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const login = (username: string, password: string): boolean => {
-    const foundUser = findUserByUsername(username);
-    
-    if (foundUser && foundUser.password === password) {
-      setUser(foundUser);
-      setRole(foundUser.role);
-      setIsAuthenticated(true);
+  const login = async (username: string, password: string): Promise<boolean> => {
+    try {
+      const foundUser = await findUserByUsername(username);
       
-      // Save session data to localStorage
-      localStorage.setItem('user', JSON.stringify(foundUser));
+      if (foundUser && foundUser.password === password) {
+        setUser(foundUser);
+        setRole(foundUser.role);
+        setIsAuthenticated(true);
+        
+        // Save session data to localStorage
+        localStorage.setItem('user', JSON.stringify(foundUser));
+        
+        toast({
+          title: "Giriş başarılı",
+          description: `Hoşgeldiniz, ${foundUser.displayName || username}!`,
+          duration: 3000
+        });
+        
+        return true;
+      }
       
       toast({
-        title: "Login successful",
-        description: `Welcome, ${foundUser.displayName || username}!`,
+        title: "Giriş başarısız",
+        description: "Kullanıcı adı veya şifre hatalı",
+        variant: "destructive",
         duration: 3000
       });
       
-      return true;
+      return false;
+    } catch (error) {
+      console.error("Login error:", error);
+      
+      toast({
+        title: "Giriş hatası",
+        description: "Giriş yapılırken bir hata oluştu",
+        variant: "destructive",
+        duration: 3000
+      });
+      
+      return false;
     }
-    
-    toast({
-      title: "Login failed",
-      description: "Invalid credentials",
-      variant: "destructive",
-      duration: 3000
-    });
-    
-    return false;
   };
 
   const logout = () => {
@@ -76,8 +89,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('user');
     
     toast({
-      title: "Logged out",
-      description: "You have been successfully logged out",
+      title: "Çıkış yapıldı",
+      description: "Başarıyla çıkış yaptınız",
       duration: 3000
     });
   };

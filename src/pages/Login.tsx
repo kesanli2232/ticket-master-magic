@@ -20,20 +20,6 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-/**
- * Metni uygun formata dönüştürür (Büyük harf ile başlar, sonrası küçük harf)
- * Örnek: "görKEM baYmaN" -> "Gorkem Bayman"
- */
-const normalizeText = (text: string): string => {
-  if (!text) return "";
-  
-  // Boşluklara göre kelimelere ayır, her kelimeyi düzgün formatlayıp birleştir
-  return text
-    .split(" ")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
-};
-
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
@@ -48,15 +34,12 @@ const Login = () => {
     },
   });
 
-  const onSubmit = (values: LoginFormValues) => {
+  const onSubmit = async (values: LoginFormValues) => {
     setIsLoading(true);
     
-    // Kullanıcı adını normalize edelim
-    const normalizedUsername = normalizeText(values.username);
-    
     // Ağ isteğini simüle etmek için küçük bir gecikme ekleyin
-    setTimeout(() => {
-      const success = login(normalizedUsername, values.password);
+    setTimeout(async () => {
+      const success = await login(values.username, values.password);
       
       if (success) {
         // Giriş başarılı olduysa kullanıcıyı admin sayfasına yönlendir
@@ -131,8 +114,7 @@ const Login = () => {
 
               <div className="text-xs text-muted-foreground mt-2">
                 <p>Örnek Giriş Bilgileri:</p>
-                <p>Kullanıcı Adı: <code className="text-foreground">admin_user</code>, Şifre: <code className="text-foreground">admin123</code></p>
-                <p>Kullanıcı Adı: <code className="text-foreground">viewer_user</code>, Şifre: <code className="text-foreground">viewer123</code></p>
+                <p>Kullanıcı adlarından birini ve şifre olarak <code className="text-foreground">admin</code> kullanabilirsiniz.</p>
               </div>
             </CardContent>
             
