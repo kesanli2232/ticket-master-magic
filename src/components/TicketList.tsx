@@ -1,9 +1,8 @@
-
 import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import TicketCard from './TicketCard';
 import FilterBar from './FilterBar';
-import { Ticket, Status, Priority, AssignedTo, TicketFilter } from '@/types';
+import { Ticket, Status, Priority, AssignedTo, TicketFilter, Role } from '@/types';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,7 +10,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { assignees, priorities, statuses } from '@/lib/data';
-import { useAuth } from '@/context/AuthContext';
 import { DB } from '@/lib/data';
 
 type TicketListProps = {
@@ -26,8 +24,10 @@ const TicketList = ({ tickets, setTickets }: TicketListProps) => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [rejectionComment, setRejectionComment] = useState<string>("");
   const [showRejectionCommentField, setShowRejectionCommentField] = useState(false);
-  const { role } = useAuth();
   const { toast } = useToast();
+  
+  // Kimlik doğrulama kaldırıldığı için varsayılan olarak admin rolü
+  const role = 'admin' as Role;
   
   const filteredTickets = tickets.filter((ticket) => {
     if (filters.status && ticket.status !== filters.status) return false;
