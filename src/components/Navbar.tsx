@@ -1,12 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/context/AuthContext';
-import { LogOut, User, Home, Menu, X } from 'lucide-react';
+import { Home, Menu, X } from 'lucide-react';
 
 const Navbar = () => {
-  const { isAuthenticated, logout, user } = useAuth();
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -63,31 +60,11 @@ const Navbar = () => {
             </Button>
           </Link>
           
-          {isAuthenticated ? (
-            <>
-              <Link to="/admin">
-                <Button variant={location.pathname === '/admin' ? "secondary" : "ghost"} size="sm">
-                  Kontrol Paneli
-                </Button>
-              </Link>
-              
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <User className="h-4 w-4" />
-                <span>{user?.username} ({user?.role === 'admin' ? 'Yönetici' : 'İzleyici'})</span>
-              </div>
-              
-              <Button variant="ghost" size="sm" onClick={logout} className="flex items-center gap-1">
-                <LogOut className="h-4 w-4" />
-                <span>Çıkış</span>
-              </Button>
-            </>
-          ) : (
-            <Link to="/login">
-              <Button variant={location.pathname === '/login' ? "secondary" : "ghost"} size="sm">
-                Giriş
-              </Button>
-            </Link>
-          )}
+          <Link to="/admin">
+            <Button variant={location.pathname === '/admin' ? "secondary" : "ghost"} size="sm">
+              Kontrol Paneli
+            </Button>
+          </Link>
         </div>
         
         {/* Mobile menu (dropdown) */}
@@ -100,31 +77,11 @@ const Navbar = () => {
               </Button>
             </Link>
             
-            {isAuthenticated ? (
-              <>
-                <Link to="/admin" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant={location.pathname === '/admin' ? "secondary" : "ghost"} size="sm" className="w-full justify-start">
-                    Kontrol Paneli
-                  </Button>
-                </Link>
-                
-                <div className="flex items-center gap-2 text-sm text-muted-foreground px-2">
-                  <User className="h-4 w-4" />
-                  <span>{user?.username} ({user?.role === 'admin' ? 'Yönetici' : 'İzleyici'})</span>
-                </div>
-                
-                <Button variant="ghost" size="sm" onClick={() => { logout(); setIsMenuOpen(false); }} className="flex items-center gap-1 w-full justify-start">
-                  <LogOut className="h-4 w-4" />
-                  <span>Çıkış</span>
-                </Button>
-              </>
-            ) : (
-              <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                <Button variant={location.pathname === '/login' ? "secondary" : "ghost"} size="sm" className="w-full justify-start">
-                  Giriş
-                </Button>
-              </Link>
-            )}
+            <Link to="/admin" onClick={() => setIsMenuOpen(false)}>
+              <Button variant={location.pathname === '/admin' ? "secondary" : "ghost"} size="sm" className="w-full justify-start">
+                Kontrol Paneli
+              </Button>
+            </Link>
           </div>
         )}
       </div>
