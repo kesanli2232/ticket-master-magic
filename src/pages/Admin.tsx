@@ -1,6 +1,4 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
 import Navbar from '@/components/Navbar';
 import TicketList from '@/components/TicketList';
@@ -15,21 +13,13 @@ const Admin = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [lastCheckedTime, setLastCheckedTime] = useState<Date | null>(null);
-  const { isAuthenticated, user } = useAuth();
-  const navigate = useNavigate();
   const { toast } = useToast();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [showReports, setShowReports] = useState(false);
   
-  // Check authentication and load tickets
+  // Load tickets on component mount
   useEffect(() => {
-    // Redirect to login page if not authenticated
-    if (!isAuthenticated) {
-      navigate('/login');
-      return;
-    }
-    
-    const loadTickets = async () => {
+    const loadInitialTickets = async () => {
       setIsLoading(true);
       try {
         // Clean up old tickets
@@ -42,8 +32,8 @@ const Admin = () => {
       } catch (error) {
         console.error('Error loading tickets:', error);
         toast({
-          title: "Data Loading Error",
-          description: "There was an error loading the tickets",
+          title: "Veri Yükleme Hatası",
+          description: "Talepler yüklenirken bir hata oluştu",
           variant: "destructive",
           duration: 5000
         });
@@ -52,14 +42,14 @@ const Admin = () => {
       }
     };
     
-    loadTickets();
+    loadInitialTickets();
     
     // Initialize last checked time
     setLastCheckedTime(new Date());
     
     // Initialize audio element with the MP3 file
     audioRef.current = new Audio('/notification_sound.mp3');
-  }, [isAuthenticated, navigate, toast]);
+  }, [toast]);
   
   // Function to load tickets
   const loadTickets = useCallback(async () => {
@@ -76,8 +66,8 @@ const Admin = () => {
     } catch (error) {
       console.error('Error loading tickets:', error);
       toast({
-        title: "Data Loading Error",
-        description: "There was an error loading the tickets",
+        title: "Veri Yükleme Hatası",
+        description: "Talepler yüklenirken bir hata oluştu",
         variant: "destructive",
         duration: 5000
       });
@@ -88,8 +78,6 @@ const Admin = () => {
   
   // Subscribe to real-time updates
   useEffect(() => {
-    if (!isAuthenticated) return;
-    
     // Subscribe to INSERT events on the tickets table
     const channel = supabase
       .channel('tickets-channel')
@@ -110,8 +98,8 @@ const Admin = () => {
           
           // Show toast notification
           toast({
-            title: "New Ticket Received!",
-            description: "A new ticket has been created",
+            title: "Yeni Talep Alındı!",
+            description: "Yeni bir destek talebi oluşturuldu",
             duration: 5000
           });
           
@@ -149,24 +137,17 @@ const Admin = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [isAuthenticated, loadTickets, toast]);
+  }, [loadTickets, toast]);
   
   // Update tickets in Supabase
   const updateTickets = async (newTickets: Ticket[]) => {
     setTickets(newTickets);
-    // No need to update all tickets at once anymore
-    // Each CRUD operation now directly updates Supabase
   };
   
   // Toggle reports panel
   const toggleReportsPanel = () => {
     setShowReports(prev => !prev);
   };
-  
-  // If not authenticated, return null
-  if (!isAuthenticated) {
-    return null;
-  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -176,9 +157,9 @@ const Admin = () => {
         <div className="page-transition">
           <header className="mb-10 flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-semibold mb-2">Ticket Management</h1>
+              <h1 className="text-3xl font-semibold mb-2">Talep Yönetimi</h1>
               <p className="text-muted-foreground">
-                View, edit, and manage all support tickets
+                Tüm destek taleplerini görüntüleyin ve yönetin
               </p>
             </div>
             
@@ -206,8 +187,8 @@ const Admin = () => {
           ) : (
             isLoading ? (
               <div className="flex flex-col items-center justify-center py-12">
-                <div className="w-16 h-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin"></div>
-                <p className="mt-4 text-muted-foreground">Loading tickets...</p>
+              <div className="w-16 h-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin"></div>
+                <p className="mt-4 text-muted-foreground">Talepler yükleniyor...</p>
               </div>
             ) : (
               <TicketList tickets={tickets} setTickets={updateTickets} />
