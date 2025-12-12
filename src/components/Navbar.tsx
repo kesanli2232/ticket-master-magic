@@ -41,7 +41,7 @@ const Navbar = () => {
             alt="Keşan Belediyesi" 
             className="h-8 w-8"
           />
-          <span className="font-medium text-lg tracking-tight">Destek Talep Sistemi</span>
+          <span className="font-medium text-lg tracking-tight">Bilgi İşlem Destek Talep Sistemi</span>
         </Link>
         
         {/* Mobile menu button */}
